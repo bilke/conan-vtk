@@ -2,7 +2,7 @@ from conans import ConanFile, CMake
 import os
 
 channel = os.getenv("CONAN_CHANNEL", "testing")
-username = os.getenv("CONAN_USERNAME", "myuser")
+username = os.getenv("CONAN_USERNAME", "bilke")
 
 class HelloReuseConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
