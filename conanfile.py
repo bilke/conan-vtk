@@ -6,6 +6,9 @@ class HelloConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     exports = "hello/*"
 
+    def source(self):
+        self.run("git clone https://github.com/memsharded/hello.git")
+
     def build(self):
         cmake = CMake(self.settings)
         self.run('cd hello && cmake . %s' % cmake.command_line)
