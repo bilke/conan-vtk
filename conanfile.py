@@ -3,16 +3,19 @@ from conans import ConanFile, CMake
 class HelloConan(ConanFile):
     name = "Hello"
     version = "0.2"
+    generators = "cmake"
     settings = "os", "compiler", "build_type", "arch"
-    exports = "hello/*"
+    exports = ["CMakeLists.txt"]
+    url="http://github.com/bilke/conan-hello"
+    license="none"
 
     def source(self):
         self.run("git clone https://github.com/memsharded/hello.git")
 
     def build(self):
         cmake = CMake(self.settings)
-        self.run('cd hello && cmake . %s' % cmake.command_line)
-        self.run("cd hello && cmake --build . %s" % cmake.build_config)
+        self.run("cmake . %s" % cmake.command_line)
+        self.run("cmake --build . %s" % cmake.build_config)
 
     def package(self):
         self.copy("*.h", dst="include", src="hello")
