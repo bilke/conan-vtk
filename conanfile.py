@@ -25,6 +25,13 @@ class VTKConan(ConanFile):
         os.unlink(zip_name)
 
     def build(self):
+        if self.settings.os == "Linux":
+            self.run("sudo apt-get update && sudo apt-get install -y \
+                freeglut3-dev \
+                mesa-common-dev \
+                mesa-utils-extra \
+                libgl1-mesa-dev \
+                libglapi-mesa")
         CMAKE_OPTIONALS = ""
         BUILD_OPTIONALS = ""
         if self.options.shared == False:
