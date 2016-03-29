@@ -8,7 +8,7 @@ environment:
     CONAN_REFERENCE: "VTK/7.0.0"
     CONAN_USERNAME: "bilke"
     CONAN_CHANNEL: "ci"
-    CONAN_TOTAL_PAGES: 8
+    CONAN_TOTAL_PAGES: 16
 
     matrix:
         - CONAN_CURRENT_PAGE: 1
@@ -19,6 +19,14 @@ environment:
         - CONAN_CURRENT_PAGE: 6
         - CONAN_CURRENT_PAGE: 7
         - CONAN_CURRENT_PAGE: 8
+        - CONAN_CURRENT_PAGE: 9
+        - CONAN_CURRENT_PAGE: 10
+        - CONAN_CURRENT_PAGE: 11
+        - CONAN_CURRENT_PAGE: 12
+        - CONAN_CURRENT_PAGE: 13
+        - CONAN_CURRENT_PAGE: 14
+        - CONAN_CURRENT_PAGE: 15
+        - CONAN_CURRENT_PAGE: 16
 install:
   - set PATH=%PATH%;%PYTHON%/Scripts/
   - pip.exe install conan_package_tools # It install conan too
