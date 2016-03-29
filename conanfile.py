@@ -1,4 +1,4 @@
-import os
+rewimport os
 from conans import ConanFile, CMake
 from conans.tools import download, unzip
 
@@ -26,16 +26,18 @@ class VTKConan(ConanFile):
 
     def build(self):
         CMAKE_OPTIONALS = ""
+        BUILD_OPTIONALS = ""
         if self.options.shared == False:
             CMAKE_OPTIONALS += "-DBUILD_SHARED_LIBS=OFF"
         cmake = CMake(self.settings)
         if self.settings.os == "Windows":
             self.run("IF not exist _build mkdir _build")
+            BUILD_OPTIONALS = "-- /maxcpucount"
         else:
             self.run("mkdir _build")
         cd_build = "cd _build"
         self.run("%s && cmake .. -DCMAKE_INSTALL_PREFIX=../%s %s %s %s" % (cd_build, self.INSTALL_DIR, self.CMAKE_OPTIONS, CMAKE_OPTIONALS, cmake.command_line))
-        self.run("%s && cmake --build . %s" % (cd_build, cmake.build_config))
+        self.run("%s && cmake --build . %s %s" % (cd_build, cmake.build_config, BUILD_OPTIONALS))
         self.run("%s && cmake --build . --target install %s" % (cd_build, cmake.build_config))
 
     def package(self):
