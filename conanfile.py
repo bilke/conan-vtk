@@ -1,4 +1,4 @@
-rewimport os
+import os
 from conans import ConanFile, CMake
 from conans.tools import download, unzip
 
@@ -35,6 +35,7 @@ class VTKConan(ConanFile):
             BUILD_OPTIONALS = "-- /maxcpucount"
         else:
             self.run("mkdir _build")
+            BUILD_OPTIONALS = " -- -j $(nproc)"
         cd_build = "cd _build"
         self.run("%s && cmake .. -DCMAKE_INSTALL_PREFIX=../%s %s %s %s" % (cd_build, self.INSTALL_DIR, self.CMAKE_OPTIONS, CMAKE_OPTIONALS, cmake.command_line))
         self.run("%s && cmake --build . %s %s" % (cd_build, cmake.build_config, BUILD_OPTIONALS))
@@ -44,8 +45,15 @@ class VTKConan(ConanFile):
         self.copy("*", dst=".", src=self.INSTALL_DIR)
 
     def package_info(self):
-        libs = ["vtksys-7.0",
-                "vtkCommonCore-7.0",
-                "vtkCommonDataModel-7.0"]
+        libs = [
+		"vtkCommonDataModel-7.0",
+		"vtkCommonMisc-7.0",
+		"vtkCommonTransforms-7.0",
+		"vtkCommonCore-7.0",
+		"vtkCommonMath-7.0",
+		"vtkCommonSystem-7.0",
+		"vtksys-7.0"
+
+	]
         self.cpp_info.libs = libs
         self.cpp_info.includedirs = ['include/vtk-7.0']
