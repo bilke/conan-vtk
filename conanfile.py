@@ -15,10 +15,9 @@ class VTKConan(ConanFile):
 
     ZIP_FOLDER_NAME = "VTK-%s" % version
     INSTALL_DIR = "_install"
-    CMAKE_OPTIONS = "-DBUILD_TESTING=OFF"
+    CMAKE_OPTIONS = "-DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF"
 
     def source(self):
-        #self.run("git clone https://github.com/memsharded/hello.git")
         zip_name = self.ZIP_FOLDER_NAME + ".zip"
         download("http://www.vtk.org/files/release/7.0/%s" % zip_name , zip_name)
         unzip(zip_name)
@@ -162,6 +161,9 @@ class VTKConan(ConanFile):
             "vtkViewsCore-7.0",
             "vtkViewsInfovis-7.0",
             "vtkzlib-7.0"
-	]
+        ]
         self.cpp_info.libs = libs
-        self.cpp_info.includedirs = ['include/vtk-7.0']
+        self.cpp_info.includedirs = [
+            'include/vtk-7.0',
+            'include/vtk-7.0/vtknetcdf/include',
+        ]
