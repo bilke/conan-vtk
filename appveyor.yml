@@ -1,8 +1,8 @@
 build: false
 environment:
-    PYTHON: "C:\\Python27"
-    PYTHON_VERSION: "2.7.8"
-    PYTHON_ARCH: "32"
+    PYTHON: "C:\\Python27-x64"
+    PYTHON_VERSION: "2.7.11"
+    PYTHON_ARCH: "64"
 
     CONAN_UPLOAD: 1
     CONAN_REFERENCE: "VTK/7.0.0"
@@ -33,4 +33,4 @@ install:
   - conan user # It creates the conan data directory
 
 test_script:
-  - python build.py
+  - C:\Python27-x64\python build.py
