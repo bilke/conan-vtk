@@ -9,7 +9,7 @@ class VTKConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False]}
     default_options = "shared=False"
-    exports = ["CMakeLists.txt"]
+    exports = ["CMakeLists.txt", "FindVTK.cmake"]
     url="http://github.com/bilke/conan-vtk"
     license="http://www.vtk.org/licensing/"
 
@@ -51,6 +51,7 @@ class VTKConan(ConanFile):
         self.run("%s && cmake --build . --target install %s" % (cd_build, cmake.build_config))
 
     def package(self):
+        self.copy("FindVTK.cmake", ".", ".")
         self.copy("*", dst=".", src=self.INSTALL_DIR)
 
     def package_info(self):

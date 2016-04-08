@@ -15,4 +15,4 @@ class VTKReuseConan(ConanFile):
         self.run("cmake --build . %s" % cmake.build_config)
 
     def test(self):
-        self.run(os.sep.join([".","bin", "myvtk"]))
+        self.run('./myvtk')
