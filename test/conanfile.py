@@ -19,4 +19,4 @@ class VTKReuseConan(ConanFile):
         self.copy(pattern="*.dylib", dst="bin", src="lib")
 
     def test(self):
-        self.run("cd bin && ./myvtk")
+        self.run("cd bin && .%smyvtk" % os.sep)
