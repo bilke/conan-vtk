@@ -6,7 +6,7 @@ username = os.getenv("CONAN_USERNAME", "bilke")
 
 class VTKReuseConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
-    requires = "VTK/7.0.0@%s/%s" % (username, channel)
+    requires = "VTK/7.1.0@%s/%s" % (username, channel)
     generators = "cmake"
 
     def build(self):
