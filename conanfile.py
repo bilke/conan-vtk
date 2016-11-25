@@ -37,7 +37,7 @@ class VTKConan(ConanFile):
         CMAKE_OPTIONALS = ""
         BUILD_OPTIONALS = ""
         if self.options.shared == False:
-            CMAKE_OPTIONALS += "-DBUILD_SHARED_LIBS=OFF"
+            CMAKE_OPTIONALS += " -DBUILD_SHARED_LIBS=OFF"
         cmake = CMake(self.settings)
         if self.settings.os == "Windows":
             self.run("IF not exist _build mkdir _build")
@@ -48,6 +48,8 @@ class VTKConan(ConanFile):
                 BUILD_OPTIONALS = "-- -j $(sysctl -n hw.ncpu)"
             else:
                 BUILD_OPTIONALS = " -- -j $(nproc)"
+        if self.settings.build_type == "Debug" and self.settings.compiler == "Visual Studio":
+            CMAKE_OPTIONALS += " -DCMAKE_DEBUG_POSTFIX=_d"
         cd_build = "cd _build"
         self.run("%s && cmake .. -DCMAKE_INSTALL_PREFIX=../%s %s %s %s" % (cd_build, self.INSTALL_DIR, self.CMAKE_OPTIONS, CMAKE_OPTIONALS, cmake.command_line))
         self.run("%s && cmake --build . %s %s" % (cd_build, cmake.build_config, BUILD_OPTIONALS))
