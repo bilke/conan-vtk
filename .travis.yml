@@ -41,6 +41,10 @@ matrix:
     - os: osx
       osx_image: xcode8 # apple-clang 8
       language: generic
+      env: CONAN_CURRENT_PAGE=1
+    - os: osx
+      osx_image: xcode8 # apple-clang 8
+      language: generic
       env: CONAN_CURRENT_PAGE=2
     - os: osx
       osx_image: xcode7.3 # apple-clang 7.3
