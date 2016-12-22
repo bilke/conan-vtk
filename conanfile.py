@@ -10,11 +10,12 @@ class VTKConan(ConanFile):
     SHORT_VERSION = short_version
     generators = "cmake"
     settings = "os", "compiler", "build_type", "arch"
-    options = {"shared": [True, False]}
-    default_options = "shared=False"
+    options = {"shared": [True, False], "qt": [True, False]}
+    default_options = "shared=False", "qt=False"
     exports = ["CMakeLists.txt", "FindVTK.cmake"]
     url="http://github.com/bilke/conan-vtk"
     license="http://www.vtk.org/licensing/"
+    short_paths=True
 
     ZIP_FOLDER_NAME = "VTK-%s" % version
     INSTALL_DIR = "_install"
@@ -25,6 +26,10 @@ class VTKConan(ConanFile):
         download("http://www.vtk.org/files/release/%s/%s" % (self.short_version, zip_name), zip_name)
         unzip(zip_name)
         os.unlink(zip_name)
+
+    def requirements(self):
+        if self.options.qt == True:
+            self.requires("Qt/5.6.1-1@osechet/testing")
 
     def build(self):
         if self.settings.os == "Linux":
@@ -38,6 +43,8 @@ class VTKConan(ConanFile):
         BUILD_OPTIONALS = ""
         if self.options.shared == False:
             CMAKE_OPTIONALS += " -DBUILD_SHARED_LIBS=OFF"
+        if self.options.qt == True:
+            CMAKE_OPTIONALS += " -DVTK_Group_Qt:BOOL=ON -DVTK_QT_VERSION:STRING=5 -DVTK_BUILD_QT_DESIGNER_PLUGIN:BOOL=OFF"
         cmake = CMake(self.settings)
         if self.settings.os == "Windows":
             self.run("IF not exist _build mkdir _build")
@@ -171,6 +178,9 @@ class VTKConan(ConanFile):
             "vtkViewsInfovis-%s" % self.short_version + LIB_POSTFIX,
             "vtkzlib-%s" % self.short_version + LIB_POSTFIX
         ]
+        if self.options.qt:
+            libs.append("vtkGUISupportQt-%s" % self.short_version + LIB_POSTFIX)
+            libs.append("vtkGUISupportQtSQL-%s" % self.short_version + LIB_POSTFIX)
         self.cpp_info.libs = libs
         self.cpp_info.includedirs = [
             "include/vtk-%s" % self.short_version,
