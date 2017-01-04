@@ -9,28 +9,34 @@ env:
     - CONAN_REFERENCE="VTK/7.0.0"
     - CONAN_USERNAME="bilke"
     - CONAN_CHANNEL="testing"
-    - CONAN_TOTAL_PAGES=2
+    - CONAN_TOTAL_PAGES=4
     - CONAN_STABLE_BRANCH_PATTERN="release/*"
 
   matrix:
     - CONAN_GCC_VERSIONS=4.6 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=1
     - CONAN_GCC_VERSIONS=4.6 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=2
+    - CONAN_GCC_VERSIONS=4.6 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=3
+    - CONAN_GCC_VERSIONS=4.6 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=4
     - CONAN_GCC_VERSIONS=4.8 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=1
     - CONAN_GCC_VERSIONS=4.8 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=2
+    - CONAN_GCC_VERSIONS=4.8 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=3
+    - CONAN_GCC_VERSIONS=4.8 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=4
     - CONAN_GCC_VERSIONS=4.9 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=1
     - CONAN_GCC_VERSIONS=4.9 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=2
-    - CONAN_GCC_VERSIONS=5.2 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=1 CONAN_TOTAL_PAGES=4
-    - CONAN_GCC_VERSIONS=5.2 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=2 CONAN_TOTAL_PAGES=4
-    - CONAN_GCC_VERSIONS=5.2 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=3 CONAN_TOTAL_PAGES=4
-    - CONAN_GCC_VERSIONS=5.2 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=4 CONAN_TOTAL_PAGES=4
-    - CONAN_GCC_VERSIONS=5.3 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=1 CONAN_TOTAL_PAGES=4
-    - CONAN_GCC_VERSIONS=5.3 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=2 CONAN_TOTAL_PAGES=4
-    - CONAN_GCC_VERSIONS=5.3 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=3 CONAN_TOTAL_PAGES=4
-    - CONAN_GCC_VERSIONS=5.3 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=4 CONAN_TOTAL_PAGES=4
-    - CONAN_GCC_VERSIONS=5.4 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=1 CONAN_TOTAL_PAGES=4
-    - CONAN_GCC_VERSIONS=5.4 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=2 CONAN_TOTAL_PAGES=4
-    - CONAN_GCC_VERSIONS=5.4 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=3 CONAN_TOTAL_PAGES=4
-    - CONAN_GCC_VERSIONS=5.4 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=4 CONAN_TOTAL_PAGES=4
+    - CONAN_GCC_VERSIONS=4.9 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=3
+    - CONAN_GCC_VERSIONS=4.9 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=4
+    - CONAN_GCC_VERSIONS=5.2 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=1
+    - CONAN_GCC_VERSIONS=5.2 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=2
+    - CONAN_GCC_VERSIONS=5.2 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=3
+    - CONAN_GCC_VERSIONS=5.2 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=4
+    - CONAN_GCC_VERSIONS=5.3 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=1
+    - CONAN_GCC_VERSIONS=5.3 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=2
+    - CONAN_GCC_VERSIONS=5.3 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=3
+    - CONAN_GCC_VERSIONS=5.3 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=4
+    - CONAN_GCC_VERSIONS=5.4 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=1
+    - CONAN_GCC_VERSIONS=5.4 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=2
+    - CONAN_GCC_VERSIONS=5.4 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=3
+    - CONAN_GCC_VERSIONS=5.4 CONAN_USE_DOCKER=1 CONAN_CURRENT_PAGE=4
 
 matrix:
   include:
@@ -43,6 +49,14 @@ matrix:
       language: generic
       env: CONAN_CURRENT_PAGE=2
     - os: osx
+      osx_image: xcode8.2
+      language: generic
+      env: CONAN_CURRENT_PAGE=3
+    - os: osx
+      osx_image: xcode8.2
+      language: generic
+      env: CONAN_CURRENT_PAGE=4
+    - os: osx
       osx_image: xcode8
       language: generic
       env: CONAN_CURRENT_PAGE=1
@@ -50,6 +64,14 @@ matrix:
       osx_image: xcode8
       language: generic
       env: CONAN_CURRENT_PAGE=2
+    - os: osx
+      osx_image: xcode8
+      language: generic
+      env: CONAN_CURRENT_PAGE=3
+    - os: osx
+      osx_image: xcode8
+      language: generic
+      env: CONAN_CURRENT_PAGE=4
     - os: osx
       osx_image: xcode7.3
       language: generic
@@ -59,6 +81,14 @@ matrix:
       language: generic
       env: CONAN_CURRENT_PAGE=2
     - os: osx
+      osx_image: xcode7.3
+      language: generic
+      env: CONAN_CURRENT_PAGE=3
+    - os: osx
+      osx_image: xcode7.3
+      language: generic
+      env: CONAN_CURRENT_PAGE=4
+    - os: osx
       osx_image: xcode7.1
       language: generic
       env: CONAN_CURRENT_PAGE=1
@@ -66,6 +96,14 @@ matrix:
       osx_image: xcode7.1
       language: generic
       env: CONAN_CURRENT_PAGE=2
+    - os: osx
+      osx_image: xcode7.1
+      language: generic
+      env: CONAN_CURRENT_PAGE=3
+    - os: osx
+      osx_image: xcode7.1
+      language: generic
+      env: CONAN_CURRENT_PAGE=4
     - os: osx
       osx_image: xcode6.4
       language: generic
@@ -75,6 +113,14 @@ matrix:
       language: generic
       env: CONAN_CURRENT_PAGE=2
     - os: osx
+      osx_image: xcode6.4
+      language: generic
+      env: CONAN_CURRENT_PAGE=3
+    - os: osx
+      osx_image: xcode6.4
+      language: generic
+      env: CONAN_CURRENT_PAGE=4
+    - os: osx
       osx_image: xcode6.2
       language: generic
       env: CONAN_CURRENT_PAGE=1
@@ -82,6 +128,14 @@ matrix:
       osx_image: xcode6.2
       language: generic
       env: CONAN_CURRENT_PAGE=2
+    - os: osx
+      osx_image: xcode6.2
+      language: generic
+      env: CONAN_CURRENT_PAGE=3
+    - os: osx
+      osx_image: xcode6.2
+      language: generic
+      env: CONAN_CURRENT_PAGE=4
 
 install:
   - ./.travis/install.sh
