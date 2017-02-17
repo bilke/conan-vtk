@@ -15,7 +15,10 @@ class VTKConan(ConanFile):
 
     ZIP_FOLDER_NAME = "VTK-%s" % version
     INSTALL_DIR = "_install"
-    CMAKE_OPTIONS = "-DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF"
+    CMAKE_OPTIONS = \
+        " -DBUILD_TESTING=OFF " + \
+        " -DBUILD_EXAMPLES=OFF " + \
+        " -DCMAKE_POSITION_INDEPENDENT_CODE=ON " # -fPIC
 
     def source(self):
         zip_name = self.ZIP_FOLDER_NAME + ".zip"
