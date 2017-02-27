@@ -10,10 +10,10 @@ class VTKConan(ConanFile):
     SHORT_VERSION = short_version
     generators = "cmake"
     settings = "os", "compiler", "build_type", "arch"
-    options = {"shared": [True, False], "qt": [True, False]}
-    default_options = "shared=False", "qt=False"
+    options = {"shared": [True, False], "qt": [True, False],"cygwin_msvc": [True, False],"linux_use_sudo": [True, False]}
+    default_options = "shared=False", "qt=False", "cygwin_msvc=False", "linux_use_sudo=True"
     exports = ["CMakeLists.txt", "FindVTK.cmake"]
-    url="http://github.com/bilke/conan-vtk"
+    url="http://github.com/pkarasev3/conan-vtk"
     license="http://www.vtk.org/licensing/"
     short_paths=True
 
@@ -33,24 +33,30 @@ class VTKConan(ConanFile):
 
     def build(self):
         if self.settings.os == "Linux":
-            self.run("sudo apt-get update && sudo apt-get install -y \
-                freeglut3-dev \
-                mesa-common-dev \
-                mesa-utils-extra \
-                libgl1-mesa-dev \
-                libglapi-mesa")
+            if self.options.linux_use_sudo:
+                self.run("sudo apt-get update && sudo apt-get install -y \
+                    freeglut3-dev \
+                    mesa-common-dev \
+                    mesa-utils-extra \
+                    libgl1-mesa-dev \
+                    libglapi-mesa")
         CMAKE_OPTIONALS = ""
         BUILD_OPTIONALS = ""
         if self.options.shared == False:
             CMAKE_OPTIONALS += " -DBUILD_SHARED_LIBS=OFF"
+        if self.options.shared == True:
+            CMAKE_OPTIONALS += " -DBUILD_SHARED_LIBS=ON"
         if self.options.qt == True:
             CMAKE_OPTIONALS += " -DVTK_Group_Qt:BOOL=ON -DVTK_QT_VERSION:STRING=5 -DVTK_BUILD_QT_DESIGNER_PLUGIN:BOOL=OFF"
         cmake = CMake(self.settings)
         if self.settings.os == "Windows":
-            self.run("IF not exist _build mkdir _build")
+            if self.options.cygwin_msvc == False:
+                self.run("IF not exist _build mkdir _build")
+            else:
+                self.run("mkdir -p _build")
             BUILD_OPTIONALS = "-- /maxcpucount"
         else:
-            self.run("mkdir _build")
+            self.run("mkdir -p _build")
             if self.settings.os == "Macos":
                 BUILD_OPTIONALS = "-- -j $(sysctl -n hw.ncpu)"
             else:
