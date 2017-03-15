@@ -4,22 +4,23 @@ from conans.tools import download, unzip
 
 class VTKConan(ConanFile):
     name = "VTK"
-    version = "7.1.0"
-    version_split = version.split('.')
+    vtk_version = "7.1.0"
+    version = "7.1.0.b"
+    version_split = vtk_version.split('.')
     short_version = "%s.%s" % (version_split[0], version_split[1])
     SHORT_VERSION = short_version
     generators = "cmake"
     settings = "os", "compiler", "build_type", "arch"
-    options = {"shared": [True, False], "qt": [True, False],"cygwin_msvc": [True, False],"linux_use_sudo": [True, False]}
-    default_options = "shared=False", "qt=False", "cygwin_msvc=False", "linux_use_sudo=True"
+    options = {"shared": [True, False], "qt": [True, False],}
+    default_options = "shared=True", "qt=False"
     exports = ["CMakeLists.txt", "FindVTK.cmake"]
     url="http://github.com/pkarasev3/conan-vtk"
     license="http://www.vtk.org/licensing/"
     short_paths=True
 
-    ZIP_FOLDER_NAME = "VTK-%s" % version
+    ZIP_FOLDER_NAME = "VTK-%s" % vtk_version
     INSTALL_DIR = "_install"
-    CMAKE_OPTIONS = "-DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF -DVTK_Group_StandAlone:BOOL=OFF"
+    CMAKE_OPTIONS = "-DBUILD_TESTING=ON -DBUILD_EXAMPLES=OFF -DVTK_Group_StandAlone:BOOL=OFF"
 
     def source(self):
         zip_name = self.ZIP_FOLDER_NAME + ".zip"
@@ -31,15 +32,7 @@ class VTKConan(ConanFile):
         if self.options.qt == True:
             self.requires("Qt/5.6.1-1@osechet/testing")
 
-    def build(self):
-        if self.settings.os == "Linux":
-            if self.options.linux_use_sudo:
-                self.run("sudo apt-get update && sudo apt-get install -y \
-                    freeglut3-dev \
-                    mesa-common-dev \
-                    mesa-utils-extra \
-                    libgl1-mesa-dev \
-                    libglapi-mesa")
+    def build(self):        
         CMAKE_OPTIONALS = ""
         BUILD_OPTIONALS = ""
         if self.options.shared == False:
@@ -50,10 +43,7 @@ class VTKConan(ConanFile):
             CMAKE_OPTIONALS += " -DVTK_Group_Qt:BOOL=ON -DVTK_QT_VERSION:STRING=5 -DVTK_BUILD_QT_DESIGNER_PLUGIN:BOOL=OFF"
         cmake = CMake(self.settings)
         if self.settings.os == "Windows":
-            if self.options.cygwin_msvc == False:
-                self.run("IF not exist _build mkdir _build")
-            else:
-                self.run("mkdir -p _build")
+            self.run("IF not exist _build mkdir _build")            
             BUILD_OPTIONALS = "-- /maxcpucount"
         else:
             self.run("mkdir -p _build")
