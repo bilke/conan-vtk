@@ -1,28 +1,25 @@
 import os
 from conans import ConanFile, CMake
-from conans.tools import download, unzip
+from conans.tools import download, unzip, os_info, SystemPackageTool
 
 class VTKConan(ConanFile):
     name = "VTK"
+    description = "Visualization Toolkit by Kitware"
     version = "7.1.0"
     version_split = version.split('.')
     short_version = "%s.%s" % (version_split[0], version_split[1])
     SHORT_VERSION = short_version
     generators = "cmake"
     settings = "os", "compiler", "build_type", "arch"
-    options = {"shared": [True, False], "qt": [True, False]}
-    default_options = "shared=False", "qt=False"
+    options = {"shared": [True, False], "qt": [True, False], "mpi": [True, False]}
+    default_options = "shared=False", "qt=False", "mpi=False"
     exports = ["CMakeLists.txt", "FindVTK.cmake"]
     url="http://github.com/bilke/conan-vtk"
     license="http://www.vtk.org/licensing/"
     short_paths=True
 
-    ZIP_FOLDER_NAME = "VTK-%s" % version
-    INSTALL_DIR = "_install"
-    CMAKE_OPTIONS = "-DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF"
-
     def source(self):
-        zip_name = self.ZIP_FOLDER_NAME + ".zip"
+        zip_name = "VTK-%s.zip" % self.version
         download("http://www.vtk.org/files/release/%s/%s" % (self.short_version, zip_name), zip_name)
         unzip(zip_name)
         os.unlink(zip_name)
@@ -31,40 +28,45 @@ class VTKConan(ConanFile):
         if self.options.qt == True:
             self.requires("Qt/5.6.1-1@osechet/testing")
 
-    def build(self):
-        if self.settings.os == "Linux":
-            self.run("sudo apt-get update && sudo apt-get install -y \
-                freeglut3-dev \
-                mesa-common-dev \
-                mesa-utils-extra \
-                libgl1-mesa-dev \
-                libglapi-mesa")
-        CMAKE_OPTIONALS = ""
-        BUILD_OPTIONALS = ""
-        if self.options.shared == False:
-            CMAKE_OPTIONALS += " -DBUILD_SHARED_LIBS=OFF"
-        if self.options.qt == True:
-            CMAKE_OPTIONALS += " -DVTK_Group_Qt:BOOL=ON -DVTK_QT_VERSION:STRING=5 -DVTK_BUILD_QT_DESIGNER_PLUGIN:BOOL=OFF"
-        cmake = CMake(self.settings)
-        if self.settings.os == "Windows":
-            self.run("IF not exist _build mkdir _build")
-            BUILD_OPTIONALS = "-- /maxcpucount"
-        else:
-            self.run("mkdir _build")
-            if self.settings.os == "Macos":
-                BUILD_OPTIONALS = "-- -j $(sysctl -n hw.ncpu)"
-            else:
-                BUILD_OPTIONALS = " -- -j $(nproc)"
-        if self.settings.build_type == "Debug" and self.settings.compiler == "Visual Studio":
-            CMAKE_OPTIONALS += " -DCMAKE_DEBUG_POSTFIX=_d"
-        cd_build = "cd _build"
-        self.run("%s && cmake .. -DCMAKE_INSTALL_PREFIX=../%s %s %s %s" % (cd_build, self.INSTALL_DIR, self.CMAKE_OPTIONS, CMAKE_OPTIONALS, cmake.command_line))
-        self.run("%s && cmake --build . %s %s" % (cd_build, cmake.build_config, BUILD_OPTIONALS))
-        self.run("%s && cmake --build . --target install %s" % (cd_build, cmake.build_config))
+    def system_requirements(self):
+        pack_names = None
+        if os_info.linux_distro == "ubuntu":
+            pack_names = [
+                "freeglut3-dev",
+                "mesa-common-dev",
+                "mesa-utils-extra",
+                "libgl1-mesa-dev",
+                "libglapi-mesa"]
 
-    def package(self):
-        self.copy("FindVTK.cmake", ".", ".")
-        self.copy("*", dst=".", src=self.INSTALL_DIR)
+            if self.settings.arch == "x86":
+                full_pack_names = []
+                for pack_name in pack_names:
+                    full_pack_names += [pack_name + ":i386"]
+                pack_names = full_pack_names
+
+        if pack_names:
+            installer = SystemPackageTool()
+            installer.update() # Update the package database
+            installer.install(" ".join(pack_names)) # Install the package
+
+    def build(self):
+        cmake = CMake(self)
+        cmake.definitions["BUILD_TESTING"] = "OFF"
+        cmake.definitions["BUILD_EXAMPLES"] = "OFF"
+        if self.options.shared == False:
+            cmake.definitions["BUILD_SHARED_LIBS"] = "OFF"
+        if self.options.qt == True:
+            cmake.definitions["VTK_Group_Qt"] = "ON"
+            cmake.definitions["VTK_QT_VERSION"] = "5"
+            cmake.definitions["VTK_BUILD_QT_DESIGNER_PLUGIN"] = "OFF"
+        if self.options.mpi == True:
+            cmake.definitions["VTK_Group_MPI"] = "ON"
+
+        if self.settings.build_type == "Debug" and self.settings.compiler == "Visual Studio":
+            cmake.definitions["CMAKE_DEBUG_POSTFIX"] = "_d"
+
+        cmake.configure(build_dir="build")
+        cmake.build(target="install")
 
     def package_info(self):
         LIB_POSTFIX = ""
@@ -181,6 +183,13 @@ class VTKConan(ConanFile):
         if self.options.qt:
             libs.append("vtkGUISupportQt-%s" % self.short_version + LIB_POSTFIX)
             libs.append("vtkGUISupportQtSQL-%s" % self.short_version + LIB_POSTFIX)
+        if self.options.mpi:
+            libs.append("vtkParallelCore-%s" % self.short_version + LIB_POSTFIX)
+            libs.append("vtkParallelMPI-%s" % self.short_version + LIB_POSTFIX)
+            libs.append("vtkIOParallel-%s" % self.short_version + LIB_POSTFIX)
+            libs.append("vtkIOParallelXML-%s" % self.short_version + LIB_POSTFIX)
+            libs.append("vtkIOParallelNetCDF-%s" % self.short_version + LIB_POSTFIX)
+            # vtkFiltersParallelDIY2;vtkFiltersParallelGeometry;vtkFiltersParallelMPI;vtkIOMPIImage;vtkIOMPIParallel;vtkIOParallelNetCDF;vtkParallelMPI;vtkdiy2
         self.cpp_info.libs = libs
         self.cpp_info.includedirs = [
             "include/vtk-%s" % self.short_version,

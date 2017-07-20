@@ -12,3 +12,4 @@ if(MSVC)
 endif()
 
 add_subdirectory(VTK-7.1.0)
+install(FILES FindVTK.cmake DESTINATION .)

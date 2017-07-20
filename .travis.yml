@@ -5,9 +5,9 @@ sudo: required
 language: python
 env:
   global:
-    - CONAN_UPLOAD=1
     - CONAN_REFERENCE="VTK/7.1.0"
     - CONAN_USERNAME="bilke"
+    - CONAN_LOGIN_USERNAME="jenkins"
     - CONAN_CHANNEL="testing"
     - CONAN_TOTAL_PAGES=4
     - CONAN_STABLE_BRANCH_PATTERN="release/*"
