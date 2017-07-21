@@ -108,38 +108,6 @@ matrix:
       osx_image: xcode7.1
       language: generic
       env: CONAN_CURRENT_PAGE=4
-    - os: osx
-      osx_image: xcode6.4
-      language: generic
-      env: CONAN_CURRENT_PAGE=1
-    - os: osx
-      osx_image: xcode6.4
-      language: generic
-      env: CONAN_CURRENT_PAGE=2
-    - os: osx
-      osx_image: xcode6.4
-      language: generic
-      env: CONAN_CURRENT_PAGE=3
-    - os: osx
-      osx_image: xcode6.4
-      language: generic
-      env: CONAN_CURRENT_PAGE=4
-    - os: osx
-      osx_image: xcode6.2
-      language: generic
-      env: CONAN_CURRENT_PAGE=1
-    - os: osx
-      osx_image: xcode6.2
-      language: generic
-      env: CONAN_CURRENT_PAGE=2
-    - os: osx
-      osx_image: xcode6.2
-      language: generic
-      env: CONAN_CURRENT_PAGE=3
-    - os: osx
-      osx_image: xcode6.2
-      language: generic
-      env: CONAN_CURRENT_PAGE=4
 
 install:
   - ./.travis/install.sh
