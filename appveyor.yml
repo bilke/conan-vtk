@@ -1,18 +1,18 @@
 build: false
 environment:
-    PYTHON: "C:\\Python27-x64"
-    PYTHON_VERSION: "2.7.11"
-    PYTHON_ARCH: "64"
+  PYTHON: "C:\\Python27-x64"
+  PYTHON_VERSION: "2.7.11"
+  PYTHON_ARCH: "64"
 
-    CONAN_REFERENCE: "VTK/7.1.0"
-    CONAN_USERNAME: "bilke"
-    CONAN_LOGIN_USERNAME: "jenkins"
-    CONAN_CHANNEL: "testing"
-    CONAN_STABLE_BRANCH_PATTERN: "release/*"
-    VS150COMNTOOLS: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\"
-    CONAN_TOTAL_PAGES: 4
+  CONAN_REFERENCE: "VTK/7.1.0"
+  CONAN_USERNAME: "bilke"
+  CONAN_LOGIN_USERNAME: "jenkins"
+  CONAN_CHANNEL: "testing"
+  CONAN_STABLE_BRANCH_PATTERN: "release/*"
+  VS150COMNTOOLS: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\"
+  CONAN_TOTAL_PAGES: 4
 
-matrix:
+  matrix:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       CONAN_VISUAL_VERSIONS: 12
       CONAN_CURRENT_PAGE: 1
