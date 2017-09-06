@@ -6,12 +6,12 @@ environment:
 
   CONAN_REFERENCE: "VTK/7.1.0"
   CONAN_USERNAME: "bilke"
-  CONAN_LOGIN_USERNAME: "bilke"
+  CONAN_LOGIN_USERNAME: "jenkins"
   CONAN_CHANNEL: "testing"
   CONAN_STABLE_BRANCH_PATTERN: "release/*"
   VS150COMNTOOLS: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\"
   CONAN_TOTAL_PAGES: 4
-  CONAN_UPLOAD: "https://api.bintray.com/conan/ogs/conan"
+  CONAN_UPLOAD: "https://ogs.jfrog.io/ogs/api/conan/conan"
 
   matrix:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015

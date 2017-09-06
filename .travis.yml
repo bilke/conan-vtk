@@ -2,9 +2,9 @@ env:
   global:
     - CONAN_REFERENCE: "VTK/7.1.0"
     - CONAN_USERNAME: "bilke"
-    - CONAN_LOGIN_USERNAME: "bilke"
+    - CONAN_LOGIN_USERNAME: "jenkins"
     - CONAN_CHANNEL: "testing"
-    - CONAN_UPLOAD: "https://api.bintray.com/conan/ogs/conan"
+    - CONAN_UPLOAD: "https://ogs.jfrog.io/ogs/api/conan/conan"
     - CONAN_STABLE_BRANCH_PATTERN: "release/*"
     - CONAN_TOTAL_PAGES: 4
     - CONAN_UPLOAD_ONLY_WHEN_STABLE: 1 # Will only upload when the branch matches "release/*"
@@ -79,13 +79,13 @@ matrix:
     - <<: *linux
       env: CONAN_GCC_VERSIONS=6.2 CONAN_DOCKER_IMAGE=lasote/conangcc62 CONAN_CURRENT_PAGE=4
     - <<: *linux
-      env: CONAN_GCC_VERSIONS=6.2 CONAN_DOCKER_IMAGE=lasote/conangcc63 CONAN_CURRENT_PAGE=1
+      env: CONAN_GCC_VERSIONS=6.3 CONAN_DOCKER_IMAGE=lasote/conangcc63 CONAN_CURRENT_PAGE=1
     - <<: *linux
-      env: CONAN_GCC_VERSIONS=6.2 CONAN_DOCKER_IMAGE=lasote/conangcc63 CONAN_CURRENT_PAGE=2
+      env: CONAN_GCC_VERSIONS=6.3 CONAN_DOCKER_IMAGE=lasote/conangcc63 CONAN_CURRENT_PAGE=2
     - <<: *linux
-      env: CONAN_GCC_VERSIONS=6.2 CONAN_DOCKER_IMAGE=lasote/conangcc63 CONAN_CURRENT_PAGE=3
+      env: CONAN_GCC_VERSIONS=6.3 CONAN_DOCKER_IMAGE=lasote/conangcc63 CONAN_CURRENT_PAGE=3
     - <<: *linux
-      env: CONAN_GCC_VERSIONS=6.2 CONAN_DOCKER_IMAGE=lasote/conangcc63 CONAN_CURRENT_PAGE=4
+      env: CONAN_GCC_VERSIONS=6.3 CONAN_DOCKER_IMAGE=lasote/conangcc63 CONAN_CURRENT_PAGE=4
     - <<: *osx
       osx_image: xcode8.2
       env: CONAN_APPLE_CLANG_VERSIONS=8.2 CONAN_CURRENT_PAGE=1
