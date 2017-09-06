@@ -11,8 +11,8 @@ class VTKConan(ConanFile):
     SHORT_VERSION = short_version
     generators = "cmake"
     settings = "os", "compiler", "build_type", "arch"
-    options = {"shared": [True, False], "qt": [True, False], "mpi": [True, False]}
-    default_options = "shared=False", "qt=False", "mpi=False"
+    options = {"shared": [True, False], "qt": [True, False], "mpi": [True, False], "fPIC": [True, False],}
+    default_options = "shared=False", "qt=False", "mpi=False", "fPIC=False"
     exports = ["CMakeLists.txt", "FindVTK.cmake"]
     url="http://github.com/bilke/conan-vtk"
     license="http://www.vtk.org/licensing/"
@@ -49,6 +49,12 @@ class VTKConan(ConanFile):
             installer.update() # Update the package database
             installer.install(" ".join(pack_names)) # Install the package
 
+    def config_options(self):
+        # First configuration step. Only settings are defined. Options can be removed
+        # according to these settings
+        if self.settings.compiler == "Visual Studio":
+            self.options.remove("fPIC")
+
     def build(self):
         cmake = CMake(self)
         cmake.definitions["BUILD_TESTING"] = "OFF"
@@ -64,6 +70,10 @@ class VTKConan(ConanFile):
 
         if self.settings.build_type == "Debug" and self.settings.compiler == "Visual Studio":
             cmake.definitions["CMAKE_DEBUG_POSTFIX"] = "_d"
+
+        if self.settings.compiler != "Visual Studio":
+            if self.options.fPIC:
+                cmake.definitions["CMAKE_POSITION_INDEPENDENT_CODE"] = "ON"
 
         cmake.configure(build_dir="build")
         cmake.build(target="install")
