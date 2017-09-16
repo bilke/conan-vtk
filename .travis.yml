@@ -1,6 +1,6 @@
 env:
   global:
-    - CONAN_REFERENCE: "VTK/7.1.0"
+    - CONAN_REFERENCE: "VTK/8.0.1"
     - CONAN_USERNAME: "bilke"
     - CONAN_LOGIN_USERNAME: "jenkins"
     - CONAN_CHANNEL: "testing"

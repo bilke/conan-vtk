@@ -11,5 +11,5 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_RELEASE} /Z7")
 endif()
 
-add_subdirectory(VTK-7.1.0)
+add_subdirectory(VTK-8.0.1)
 install(FILES FindVTK.cmake DESTINATION .)
