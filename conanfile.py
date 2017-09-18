@@ -5,7 +5,7 @@ from conans.tools import download, unzip, os_info, SystemPackageTool
 class VTKConan(ConanFile):
     name = "VTK"
     description = "Visualization Toolkit by Kitware"
-    version = "7.1.0"
+    version = "8.0.1"
     version_split = version.split('.')
     short_version = "%s.%s" % (version_split[0], version_split[1])
     SHORT_VERSION = short_version
@@ -164,7 +164,7 @@ class VTKConan(ConanFile):
             "vtkjsoncpp-%s" % self.short_version + LIB_POSTFIX,
             "vtklibxml2-%s" % self.short_version + LIB_POSTFIX,
             "vtkmetaio-%s" % self.short_version + LIB_POSTFIX,
-            "vtkNetCDF_cxx-%s" % self.short_version + LIB_POSTFIX,
+            "vtkNetCDF_c++%s" % LIB_POSTFIX,
             "vtkNetCDF-%s" % self.short_version + LIB_POSTFIX,
             "vtkoggtheora-%s" % self.short_version + LIB_POSTFIX,
             "vtkParallelCore-%s" % self.short_version + LIB_POSTFIX,

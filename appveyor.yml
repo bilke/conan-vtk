@@ -4,7 +4,7 @@ environment:
   PYTHON_VERSION: "2.7.11"
   PYTHON_ARCH: "64"
 
-  CONAN_REFERENCE: "VTK/7.1.0"
+  CONAN_REFERENCE: "VTK/8.0.1"
   CONAN_USERNAME: "bilke"
   CONAN_LOGIN_USERNAME: "jenkins"
   CONAN_CHANNEL: "testing"
