@@ -25,7 +25,7 @@ int main(int, char *[])
   // Sort the array
   vtkSmartPointer<vtkSortDataArray> sortDataArray =
     vtkSmartPointer<vtkSortDataArray>::New();
-  sortDataArray->Sort(keyArray, valueArray);
+  sortDataArray->Sort(keyArray, valueArray, 0);
 
   std::cout << "Sorted: " << valueArray->GetValue(0) << " "
             << valueArray->GetValue(1) << " "
