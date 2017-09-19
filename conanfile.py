@@ -164,7 +164,7 @@ class VTKConan(ConanFile):
             "vtkjsoncpp-%s" % self.short_version + LIB_POSTFIX,
             "vtklibxml2-%s" % self.short_version + LIB_POSTFIX,
             "vtkmetaio-%s" % self.short_version + LIB_POSTFIX,
-            "vtkNetCDF_c++%s" % LIB_POSTFIX,
+            "vtknetcdf_c++" + LIB_POSTFIX,
             "vtkNetCDF-%s" % self.short_version + LIB_POSTFIX,
             "vtkoggtheora-%s" % self.short_version + LIB_POSTFIX,
             "vtkParallelCore-%s" % self.short_version + LIB_POSTFIX,
@@ -204,4 +204,5 @@ class VTKConan(ConanFile):
         self.cpp_info.includedirs = [
             "include/vtk-%s" % self.short_version,
             "include/vtk-%s/vtknetcdf/include" % self.short_version,
+            "include/vtk-%s/vtknetcdfcpp" % self.short_version
         ]
