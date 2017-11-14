@@ -30,7 +30,7 @@ class VTKConan(ConanFile):
 
     def system_requirements(self):
         pack_names = None
-        if os_info.linux_distro == "ubuntu":
+        if os_info.linux_distro == "ubuntu" and self.options.x11 == True:
             pack_names = [
                 "freeglut3-dev",
                 "mesa-common-dev",
