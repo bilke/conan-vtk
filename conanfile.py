@@ -11,8 +11,8 @@ class VTKConan(ConanFile):
     SHORT_VERSION = short_version
     generators = "cmake"
     settings = "os", "compiler", "build_type", "arch"
-    options = {"shared": [True, False], "qt": [True, False], "mpi": [True, False], "fPIC": [True, False],}
-    default_options = "shared=False", "qt=False", "mpi=False", "fPIC=False"
+    options = {"shared": [True, False], "qt": [True, False], "mpi": [True, False], "fPIC": [True, False], "x11": [True, False]}
+    default_options = "shared=False", "qt=False", "mpi=False", "fPIC=False", "x11=False"
     exports = ["CMakeLists.txt", "FindVTK.cmake"]
     url="http://github.com/bilke/conan-vtk"
     license="http://www.vtk.org/licensing/"
@@ -74,6 +74,11 @@ class VTKConan(ConanFile):
         if self.settings.compiler != "Visual Studio":
             if self.options.fPIC:
                 cmake.definitions["CMAKE_POSITION_INDEPENDENT_CODE"] = "ON"
+
+        if self.options.x11 == True:
+            cmake.definitions["VTK_USE_X"] = "ON"
+        else:
+            cmake.definitions["VTK_USE_X"] = "OFF"
 
         cmake.configure(build_dir="build")
         cmake.build(target="install")
