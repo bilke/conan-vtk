@@ -12,7 +12,7 @@ class VTKConan(ConanFile):
     generators = "cmake"
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False], "qt": [True, False], "mpi": [True, False], "fPIC": [True, False], "x11": [True, False]}
-    default_options = "shared=False", "qt=False", "mpi=False", "fPIC=False", "x11=False"
+    default_options = "shared=False", "qt=False", "mpi=False", "fPIC=False", "x11=True"
     exports = ["CMakeLists.txt", "FindVTK.cmake"]
     url="http://github.com/bilke/conan-vtk"
     license="http://www.vtk.org/licensing/"
