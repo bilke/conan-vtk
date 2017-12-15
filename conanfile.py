@@ -50,10 +50,10 @@ class VTKConan(ConanFile):
             installer.install(" ".join(pack_names)) # Install the package
 
     def config_options(self):
-        # First configuration step. Only settings are defined. Options can be removed
-        # according to these settings
         if self.settings.compiler == "Visual Studio":
-            self.options.remove("fPIC")
+            del self.options.fPIC
+        if not os_info.is_linux:
+            del self.options.x11
 
     def build(self):
         cmake = CMake(self)
@@ -75,10 +75,11 @@ class VTKConan(ConanFile):
             if self.options.fPIC:
                 cmake.definitions["CMAKE_POSITION_INDEPENDENT_CODE"] = "ON"
 
-        if self.options.x11 == True:
-            cmake.definitions["VTK_USE_X"] = "ON"
-        else:
-            cmake.definitions["VTK_USE_X"] = "OFF"
+        if os_info.is_linux:
+            if self.options.x11 == True:
+                cmake.definitions["VTK_USE_X"] = "ON"
+            else:
+                cmake.definitions["VTK_USE_X"] = "OFF"
 
         cmake.configure(build_dir="build")
         cmake.build(target="install")
