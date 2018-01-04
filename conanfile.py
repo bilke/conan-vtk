@@ -43,12 +43,6 @@ class VTKConan(ConanFile):
                 "libxt-dev",
                 "libglu1-mesa-dev"]
 
-            if self.settings.arch == "x86":
-                full_pack_names = []
-                for pack_name in pack_names:
-                    full_pack_names += [pack_name + ":i386"]
-                pack_names = full_pack_names
-
         if pack_names:
             installer = SystemPackageTool()
             installer.update() # Update the package database
