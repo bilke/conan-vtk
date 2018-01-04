@@ -36,7 +36,12 @@ class VTKConan(ConanFile):
                 "mesa-common-dev",
                 "mesa-utils-extra",
                 "libgl1-mesa-dev",
-                "libglapi-mesa"]
+                "libglapi-mesa",
+                "libsm-dev",
+                "libx11-dev",
+                "libxext-dev",
+                "libxt-dev",
+                "libglu1-mesa-dev"]
 
             if self.settings.arch == "x86":
                 full_pack_names = []
