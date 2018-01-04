@@ -12,5 +12,8 @@ if __name__ == "__main__":
             new_options = copy.copy(options)
             new_options["VTK:fPIC"] = True
             filtered_builds.append([settings, new_options, env_vars, build_requires])
+            new_options = copy.copy(options)
+            new_options["VTK:x11"] = False
+            filtered_builds.append([settings, new_options, env_vars, build_requires])
         builder.builds = filtered_builds
     builder.run()
