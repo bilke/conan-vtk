@@ -12,9 +12,8 @@ class VTKConan(ConanFile):
     exports = ["LICENSE.md", "CMakeLists.txt", "FindVTK.cmake"]
     source_subfolder = "source_subfolder"
     options = {"shared": [True, False], "qt": [True, False], "mpi": [True, False],
-               "fPIC": [True, False], "x11": [True, False]}
-    default_options = ("shared=False", "qt=False", "mpi=False", "fPIC=False",
-                       "x11=False")
+               "fPIC": [True, False]}
+    default_options = ("shared=False", "qt=False", "mpi=False", "fPIC=False")
 
     short_paths = True
 
@@ -33,7 +32,7 @@ class VTKConan(ConanFile):
 
     def system_requirements(self):
         pack_names = None
-        if tools.os_info.linux_distro == "ubuntu" and self.options.x11 == True:
+        if tools.os_info.linux_distro == "ubuntu":
             pack_names = [
                 "freeglut3-dev",
                 "mesa-common-dev",
@@ -54,8 +53,6 @@ class VTKConan(ConanFile):
     def config_options(self):
         if self.settings.compiler == "Visual Studio":
             del self.options.fPIC
-        if not tools.os_info.is_linux:
-            del self.options.x11
 
     def build(self):
         cmake = CMake(self)
@@ -73,9 +70,6 @@ class VTKConan(ConanFile):
 
         if self.settings.os != "Windows":
             cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = self.options.fPIC
-
-        if tools.os_info.is_linux:
-            cmake.definitions["VTK_USE_X"] = self.options.x11
 
         cmake.configure()
         cmake.build()
