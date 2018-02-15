@@ -4,10 +4,13 @@ project(MyVTK)
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
-set (CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 11)
+
+find_package(VTK 8.1 REQUIRED)
+include(${VTK_USE_FILE})
 
 add_executable(myvtk main.cpp)
-target_link_libraries(myvtk ${CONAN_LIBS} ${CMAKE_DL_LIBS})
+target_link_libraries(myvtk ${VTK_LIBRARIES} ${CMAKE_DL_LIBS})
 
 if(UNIX AND NOT APPLE)
 	set(THREADS_PREFER_PTHREAD_FLAG ON)
