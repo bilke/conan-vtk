@@ -13,7 +13,8 @@ class VTKConan(ConanFile):
     source_subfolder = "source_subfolder"
     options = {"shared": [True, False], "qt": [True, False], "mpi": [True, False],
                "fPIC": [True, False]}
-    default_options = ("shared=False", "qt=False", "mpi=False", "fPIC=False")
+    default_options = ("shared=False", "qt=False", "mpi=False", "fPIC=False",
+                       "Qt:xmlpatterns=True")
 
     short_paths = True
 
