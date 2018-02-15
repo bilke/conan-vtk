@@ -14,6 +14,10 @@ if __name__ == "__main__":
             filtered_builds.append([settings, new_options, env_vars, build_requires])
         builder.builds = filtered_builds
     for settings, options, env_vars, build_requires in builder.builds:
+        if settings["compiler"] == "Visual Studio":
+            if settings["compiler.runtime"] == "MT" or settings["compiler.runtime"] == "MTd":
+                # Ignore MT runtime
+                continue
         new_options = copy.copy(options)
         new_options["VTK:qt"] = True
         filtered_builds.append([settings, new_options, env_vars, build_requires])
