@@ -1,18 +1,21 @@
-from conans import ConanFile, CMake
+from conans.model.conan_file import ConanFile
+from conans import CMake
 import os
 
 channel = os.getenv("CONAN_CHANNEL", "testing")
 username = os.getenv("CONAN_USERNAME", "bilke")
 
-class VTKReuseConan(ConanFile):
+class DefaultNameConan(ConanFile):
+    name = "DefaultName"
+    version = "0.1"
     settings = "os", "compiler", "build_type", "arch"
-    requires = "VTK/7.1.0@%s/%s" % (username, channel)
     generators = "cmake"
+    requires = "VTK/8.1.0@%s/%s" % (username, channel)
 
     def build(self):
         cmake = CMake(self)
-        self.run('cmake . %s %s' % (self.conanfile_directory, cmake.command_line))
-        self.run("cmake --build . %s" % cmake.build_config)
+        cmake.configure()
+        cmake.build()
 
     def imports(self):
         self.copy(pattern="*.dll", dst="bin", src="bin")

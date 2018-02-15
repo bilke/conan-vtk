@@ -1,7 +1,7 @@
-PROJECT(conanhello)
-cmake_minimum_required(VERSION 2.8)
+project(cmake_wrapper)
+
 include(conanbuildinfo.cmake)
-CONAN_BASIC_SETUP()
+conan_basic_setup()
 
 if(MSVC)
     # Remove pdb-related flags
@@ -11,5 +11,4 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_RELEASE} /Z7")
 endif()
 
-add_subdirectory(VTK-7.1.0)
-install(FILES FindVTK.cmake DESTINATION .)
+add_subdirectory(source_subfolder)
