@@ -4,6 +4,11 @@ project(MyVTK)
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
+if(APPLE)
+    # Workaround for rpath error
+    set(CMAKE_SKIP_RPATH 0)
+endif(APPLE)
+
 set(CMAKE_CXX_STANDARD 11)
 
 find_package(VTK 8.1 REQUIRED)
