@@ -29,7 +29,8 @@ class VTKConan(ConanFile):
 
     def requirements(self):
         if self.options.qt == True:
-            self.requires("Qt/5.9.2@osechet/stable")
+            self.requires("Qt/5.11.0@bilke/stable")
+            self.options["Qt"].opengl = "dynamic"
 
     def system_requirements(self):
         pack_names = None
@@ -82,4 +83,5 @@ class VTKConan(ConanFile):
         self.cpp_info.includedirs = [
             "include/vtk-%s" % self.short_version,
             "include/vtk-%s/vtknetcdf/include" % self.short_version,
+            "include/vtk-%s/vtknetcdfcpp" % self.short_version
         ]
