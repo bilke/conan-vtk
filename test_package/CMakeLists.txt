@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
-project(MyVTK)
+project(test_package)
+
+set(CMAKE_CXX_STANDARD 11)
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
@@ -9,16 +11,10 @@ if(APPLE)
     set(CMAKE_SKIP_RPATH 0)
 endif(APPLE)
 
-set(CMAKE_CXX_STANDARD 11)
+add_executable(${PROJECT_NAME} test_package.cpp )
 
-find_package(VTK 8.1 REQUIRED)
-include(${VTK_USE_FILE})
-
-add_executable(myvtk main.cpp)
-target_link_libraries(myvtk vtkCommonCore ${CMAKE_DL_LIBS})
+target_link_libraries(${PROJECT_NAME} ${CONAN_LIBS})
 
 if(UNIX AND NOT APPLE)
-	set(THREADS_PREFER_PTHREAD_FLAG ON)
-	find_package(Threads REQUIRED)
-	target_link_libraries(myvtk Threads::Threads)
+    TARGET_LINK_LIBRARIES(${PROJECT_NAME} m)
 endif()
