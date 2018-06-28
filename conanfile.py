@@ -3,7 +3,7 @@ from conans import ConanFile, CMake, tools
 
 class VTKConan(ConanFile):
     name = "VTK"
-    version = "8.1.0"
+    version = "8.1.1"
     description = "Visualization Toolkit by Kitware"
     url = "http://github.com/bilke/conan-vtk"
     license = "MIT"
