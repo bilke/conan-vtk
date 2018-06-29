@@ -13,7 +13,7 @@ endif(APPLE)
 
 add_executable(${PROJECT_NAME} test_package.cpp )
 
-target_link_libraries(${PROJECT_NAME} ${CONAN_LIBS})
+target_link_libraries(${PROJECT_NAME} ${CONAN_LIBS} ${CMAKE_DL_LIBS})
 
 if(UNIX AND NOT APPLE)
     TARGET_LINK_LIBRARIES(${PROJECT_NAME} m)

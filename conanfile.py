@@ -87,3 +87,6 @@ class VTKConan(ConanFile):
             "include/vtk-%s/vtknetcdf/include" % self.short_version,
             "include/vtk-%s/vtknetcdfcpp" % self.short_version
         ]
+
+        if self.settings.os == 'Linux':
+            self.cpp_info.libs.append('pthread')
