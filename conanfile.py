@@ -1,6 +1,7 @@
 import os
 from conans import ConanFile, CMake, tools
 
+
 class VTKConan(ConanFile):
     name = "VTK"
     version = "8.1.1"
@@ -22,7 +23,7 @@ class VTKConan(ConanFile):
 
     def source(self):
         tools.get("http://www.vtk.org/files/release/{0}/{1}-{2}.tar.gz"
-          .format(self.short_version, self.name, self.version))
+                  .format(self.short_version, self.name, self.version))
         extracted_dir = self.name + "-" + self.version
         os.rename(extracted_dir, self.source_subfolder)
 
@@ -30,6 +31,8 @@ class VTKConan(ConanFile):
         if self.options.qt == True:
             self.requires("Qt/5.11.0@bilke/stable")
             self.options["Qt"].opengl = "dynamic"
+            if tools.os_info.is_linux:
+                self.options["Qt"].qtx11extras = True
 
     def system_requirements(self):
         pack_names = None
@@ -48,8 +51,8 @@ class VTKConan(ConanFile):
 
         if pack_names:
             installer = tools.SystemPackageTool()
-            installer.update() # Update the package database
-            installer.install(" ".join(pack_names)) # Install the package
+            installer.update()  # Update the package database
+            installer.install(" ".join(pack_names))  # Install the package
 
     def config_options(self):
         if self.settings.compiler == "Visual Studio":
