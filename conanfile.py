@@ -73,7 +73,9 @@ class VTKConan(ConanFile):
             cmake.definitions["VTK_Group_Qt"] = "ON"
             cmake.definitions["VTK_QT_VERSION"] = "5"
             cmake.definitions["VTK_BUILD_QT_DESIGNER_PLUGIN"] = "OFF"
-        cmake.definitions["VTK_Group_MPI"] = self.options.mpi
+        if self.options.mpi:
+            cmake.definitions["VTK_Group_MPI"] = "ON"
+            cmake.definitions["Module_vtkIOParallelXML"] = "ON"
 
         if self.settings.build_type == "Debug" and self.settings.compiler == "Visual Studio":
             cmake.definitions["CMAKE_DEBUG_POSTFIX"] = "_d"
