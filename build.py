@@ -14,5 +14,9 @@ if __name__ == "__main__":
         new_options = copy.copy(item.options)
         new_options["VTK:qt"] = True
         items.append([item.settings, new_options, item.env_vars, item.build_requires])
+        new_options = copy.copy(item.options)
+        new_options["VTK:minimal"] = True
+        new_options["VTK:ioxml"] = True
+        items.append([item.settings, new_options, item.env_vars, item.build_requires])
     builder.items = items
     builder.run()

@@ -13,8 +13,9 @@ class VTKConan(ConanFile):
     exports = ["LICENSE.md", "CMakeLists.txt", "FindVTK.cmake"]
     source_subfolder = "source_subfolder"
     options = {"shared": [True, False], "qt": [True, False], "mpi": [True, False],
-               "fPIC": [True, False]}
-    default_options = ("shared=False", "qt=False", "mpi=False", "fPIC=False")
+               "fPIC": [True, False], "minimal": [True, False], "ioxml": [True, False]}
+    default_options = ("shared=False", "qt=False", "mpi=False", "fPIC=False",
+        "minimal=False", "ioxml=False")
 
     short_paths = True
 
@@ -28,7 +29,7 @@ class VTKConan(ConanFile):
         os.rename(extracted_dir, self.source_subfolder)
 
     def requirements(self):
-        if self.options.qt == True:
+        if self.options.qt:
             self.requires("Qt/5.11.0@bilke/stable")
             self.options["Qt"].opengl = "dynamic"
             if tools.os_info.is_linux:
@@ -36,7 +37,7 @@ class VTKConan(ConanFile):
 
     def system_requirements(self):
         pack_names = None
-        if tools.os_info.linux_distro == "ubuntu":
+        if tools.os_info.linux_distro == "ubuntu" and not self.options.minimal:
             pack_names = [
                 "freeglut3-dev",
                 "mesa-common-dev",
@@ -63,7 +64,12 @@ class VTKConan(ConanFile):
         cmake.definitions["BUILD_TESTING"] = "OFF"
         cmake.definitions["BUILD_EXAMPLES"] = "OFF"
         cmake.definitions["BUILD_SHARED_LIBS"] = self.options.shared
-        if self.options.qt == True:
+        if self.options.minimal:
+            cmake.definitions["VTK_Group_StandAlone"] = "OFF"
+            cmake.definitions["VTK_Group_Rendering"] = "OFF"
+        if self.options.ioxml:
+            cmake.definitions["Module_vtkIOXML"] = "ON"
+        if self.options.qt:
             cmake.definitions["VTK_Group_Qt"] = "ON"
             cmake.definitions["VTK_QT_VERSION"] = "5"
             cmake.definitions["VTK_BUILD_QT_DESIGNER_PLUGIN"] = "OFF"
@@ -72,8 +78,11 @@ class VTKConan(ConanFile):
         if self.settings.build_type == "Debug" and self.settings.compiler == "Visual Studio":
             cmake.definitions["CMAKE_DEBUG_POSTFIX"] = "_d"
 
-        if self.settings.os != "Windows":
-            cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = self.options.fPIC
+        if self.settings.os == 'Macos':
+            self.env['DYLD_LIBRARY_PATH'] = os.path.join(self.build_folder, 'lib')
+            self.output.info("cmake build: %s" % self.build_folder)
+            #os.environ['DYLD_LIBRARY_PATH'] = os.path.join(self.build_folder, 'lib') # + os.pathsep + os.environ['DYLD_LIBRARY_PATH']
+            #self.output.info("DYLD_LIBRARY_PATH=%s" % (os.environ['DYLD_LIBRARY_PATH']))
 
         cmake.configure()
         cmake.build()
