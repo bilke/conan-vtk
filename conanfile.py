@@ -32,6 +32,7 @@ class VTKConan(ConanFile):
         if self.options.qt:
             self.requires("Qt/5.11.0@bilke/stable")
             self.options["Qt"].opengl = "dynamic"
+            self.options["Qt"].shared = True
             if tools.os_info.is_linux:
                 self.options["Qt"].qtx11extras = True
 
