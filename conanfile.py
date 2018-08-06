@@ -13,9 +13,10 @@ class VTKConan(ConanFile):
     exports = ["LICENSE.md", "CMakeLists.txt", "FindVTK.cmake"]
     source_subfolder = "source_subfolder"
     options = {"shared": [True, False], "qt": [True, False], "mpi": [True, False],
-               "fPIC": [True, False], "minimal": [True, False], "ioxml": [True, False]}
+               "fPIC": [True, False], "minimal": [True, False], "ioxml": [True, False],
+               "ioparallelxml": [True, False]}
     default_options = ("shared=False", "qt=False", "mpi=False", "fPIC=False",
-        "minimal=False", "ioxml=False")
+        "minimal=False", "ioxml=False", "ioparallelxml=False")
 
     short_paths = True
 
@@ -76,6 +77,8 @@ class VTKConan(ConanFile):
             cmake.definitions["VTK_BUILD_QT_DESIGNER_PLUGIN"] = "OFF"
         if self.options.mpi:
             cmake.definitions["VTK_Group_MPI"] = "ON"
+            cmake.definitions["Module_vtkIOParallelXML"] = "ON"
+        if self.options.ioparallelxml:
             cmake.definitions["Module_vtkIOParallelXML"] = "ON"
 
         if self.settings.build_type == "Debug" and self.settings.compiler == "Visual Studio":
