@@ -31,7 +31,7 @@ class VTKConan(ConanFile):
 
     def requirements(self):
         if self.options.qt:
-            self.requires("Qt/5.11.0@bilke/stable")
+            self.requires("Qt/5.11.2@bilke/stable")
             self.options["Qt"].opengl = "dynamic"
             self.options["Qt"].shared = True
             if tools.os_info.is_linux:
