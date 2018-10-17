@@ -37,25 +37,39 @@ class VTKConan(ConanFile):
             if tools.os_info.is_linux:
                 self.options["Qt"].qtx11extras = True
 
-    def system_requirements(self):
+    def system_package_architecture(self):
+        if tools.os_info.with_apt:
+            if self.settings.arch == "x86":
+                return ':i386'
+            elif self.settings.arch == "x86_64":
+                return ':amd64'
+
+        if tools.os_info.with_yum:
+            if self.settings.arch == "x86":
+                return '.i686'
+            elif self.settings.arch == 'x86_64':
+                return '.x86_64'
+        return ""
+
+    def build_requirements(self):
         pack_names = None
-        if tools.os_info.linux_distro == "ubuntu" and not self.options.minimal:
-            pack_names = [
-                "freeglut3-dev",
-                "mesa-common-dev",
-                "mesa-utils-extra",
-                "libgl1-mesa-dev",
-                "libglapi-mesa",
-                "libsm-dev",
-                "libx11-dev",
-                "libxext-dev",
-                "libxt-dev",
-                "libglu1-mesa-dev"]
+        if not self.options.minimal and tools.os_info.is_linux:
+            if tools.os_info.with_apt:
+                pack_names = [
+                    "freeglut3-dev",
+                    "mesa-common-dev",
+                    "mesa-utils-extra",
+                    "libgl1-mesa-dev",
+                    "libglapi-mesa",
+                    "libsm-dev",
+                    "libx11-dev",
+                    "libxext-dev",
+                    "libxt-dev",
+                    "libglu1-mesa-dev"]
 
         if pack_names:
             installer = tools.SystemPackageTool()
-            installer.update()  # Update the package database
-            installer.install(" ".join(pack_names))  # Install the package
+            installer.install(" ".join([item + self.system_package_architecture() for item in pack_names]))
 
     def config_options(self):
         if self.settings.compiler == "Visual Studio":
