@@ -2,6 +2,7 @@ jobs:
 - job: Windows
   pool:
     vmImage: 'vs2017-win2016'
+  timeoutInMinutes: 360
   steps:
   - task: UsePythonVersion@0
     inputs:
@@ -17,6 +18,7 @@ jobs:
 - job: macOS
   pool:
     vmImage: 'macOS-10.13'
+  timeoutInMinutes: 360
   steps:
   - task: UsePythonVersion@0
     inputs:
@@ -39,6 +41,7 @@ jobs:
 - job: Linux
   pool:
     vmImage: 'Ubuntu 16.04'
+  timeoutInMinutes: 360
   steps:
   - task: UsePythonVersion@0
     inputs:
