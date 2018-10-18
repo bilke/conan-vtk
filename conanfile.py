@@ -14,9 +14,9 @@ class VTKConan(ConanFile):
     source_subfolder = "source_subfolder"
     options = {"shared": [True, False], "qt": [True, False], "mpi": [True, False],
                "fPIC": [True, False], "minimal": [True, False], "ioxml": [True, False],
-               "ioparallelxml": [True, False]}
+               "mpi_minimal": [True, False]}
     default_options = ("shared=False", "qt=False", "mpi=False", "fPIC=False",
-        "minimal=False", "ioxml=False", "ioparallelxml=False")
+        "minimal=False", "ioxml=False", "mpi_minimal=False")
 
     short_paths = True
 
@@ -92,8 +92,9 @@ class VTKConan(ConanFile):
         if self.options.mpi:
             cmake.definitions["VTK_Group_MPI"] = "ON"
             cmake.definitions["Module_vtkIOParallelXML"] = "ON"
-        if self.options.ioparallelxml:
+        if self.options.mpi_minimal:
             cmake.definitions["Module_vtkIOParallelXML"] = "ON"
+            cmake.definitions["Module_vtkParallelMPI"] = "ON"
 
         if self.settings.build_type == "Debug" and self.settings.compiler == "Visual Studio":
             cmake.definitions["CMAKE_DEBUG_POSTFIX"] = "_d"
