@@ -106,7 +106,12 @@ class VTKConan(ConanFile):
             #self.output.info("DYLD_LIBRARY_PATH=%s" % (os.environ['DYLD_LIBRARY_PATH']))
 
         cmake.configure()
-        cmake.build()
+        if self.settings.os == 'Macos':
+            with tools.environment_append({"DYLD_LIBRARY_PATH": [os.path.join(self.build_folder, 'lib')]}):
+                self.output.info("DYLD_LIBRARY_PATH=%s" % (os.environ['DYLD_LIBRARY_PATH']))
+                cmake.build()
+        else:
+            cmake.build()
         cmake.install()
 
     def package_info(self):
