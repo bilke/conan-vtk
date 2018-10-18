@@ -24,6 +24,8 @@ jobs:
     inputs:
       versionSpec: '3.7'
   - script: |
+      sudo xcode-select -switch /Applications/Xcode_${XCODE_VERSION}.app/
+      clang --version
       pip install --upgrade pip
       pip install conan --upgrade
       pip install conan_package_tools bincrafters_package_tools
@@ -34,10 +36,13 @@ jobs:
     matrix:
       Xcode-10.0:
         CONAN_APPLE_CLANG_VERSIONS: 10.0
+        XCODE_VERSION: 10
       Xcode-9.1:
         CONAN_APPLE_CLANG_VERSIONS: 9.1
+        XCODE_VERSION: 9.4.1
       Xcode-8.1:
         CONAN_APPLE_CLANG_VERSIONS: 8.1
+        XCODE_VERSION: 8.3.3
 - job: Linux
   pool:
     vmImage: 'Ubuntu 16.04'
