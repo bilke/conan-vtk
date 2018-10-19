@@ -32,8 +32,7 @@ class VTKConan(ConanFile):
     def requirements(self):
         if self.options.qt:
             self.requires("Qt/5.11.2@bilke/stable")
-            self.options["Qt"].opengl = "dynamic"
-            self.options["Qt"].shared = True
+            self.options["Qt"].qtxmlpatterns = True
             if tools.os_info.is_linux:
                 self.options["Qt"].qtx11extras = True
 
@@ -107,9 +106,11 @@ class VTKConan(ConanFile):
 
         cmake.configure()
         if self.settings.os == 'Macos':
-            with tools.environment_append({"DYLD_LIBRARY_PATH": [os.path.join(self.build_folder, 'lib')]}):
-                self.output.info("DYLD_LIBRARY_PATH=%s" % (os.environ['DYLD_LIBRARY_PATH']))
-                cmake.build()
+            # run_environment does not work here because it appends path just from
+            # requirements, not from this package itself
+            # https://docs.conan.io/en/latest/reference/build_helpers/run_environment.html#runenvironment
+            lib_path = os.path.join(self.build_folder, 'lib')
+            self.run('DYLD_LIBRARY_PATH={0} cmake --build . {1}'.format(lib_path, cmake.build_config))
         else:
             cmake.build()
         cmake.install()
