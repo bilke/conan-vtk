@@ -24,8 +24,10 @@ class VTKConan(ConanFile):
     short_version = "%s.%s" % (version_split[0], version_split[1])
 
     def source(self):
-        tools.get("http://www.vtk.org/files/release/{0}/{1}-{2}.tar.gz"
-                  .format(self.short_version, self.name, self.version))
+        tools.get("https://ogsstorage.blob.core.windows.net/tmp/{0}-{1}.tar.gz"
+                  .format(self.name, self.version))
+        # tools.get("http://www.vtk.org/files/release/{0}/{1}-{2}.tar.gz"
+        #          .format(self.short_version, self.name, self.version))
         extracted_dir = self.name + "-" + self.version
         os.rename(extracted_dir, self.source_subfolder)
 
