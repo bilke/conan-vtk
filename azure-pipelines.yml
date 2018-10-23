@@ -15,6 +15,12 @@ jobs:
       python build.py
     env:
       CONAN_PASSWORD: $(CONAN_PASSWORD)
+  strategy:
+    matrix:
+      Release:
+        CONAN_BUILD_TYPES: Release
+      Debug:
+        CONAN_BUILD_TYPES: Debug
 - job: macOS
   pool:
     vmImage: 'macOS-10.13'
