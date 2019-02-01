@@ -1,10 +1,9 @@
 import os
 from conans import ConanFile, CMake, tools
 
-
 class VTKConan(ConanFile):
     name = "VTK"
-    version = "8.1.1"
+    version = "8.2.0"
     description = "Visualization Toolkit by Kitware"
     url = "http://github.com/bilke/conan-vtk"
     license = "MIT"
@@ -26,8 +25,6 @@ class VTKConan(ConanFile):
     def source(self):
         tools.get("https://ogsstorage.blob.core.windows.net/tmp/{0}-{1}.tar.gz"
                   .format(self.name, self.version))
-        # tools.get("http://www.vtk.org/files/release/{0}/{1}-{2}.tar.gz"
-        #          .format(self.short_version, self.name, self.version))
         extracted_dir = self.name + "-" + self.version
         os.rename(extracted_dir, self.source_subfolder)
 
@@ -113,7 +110,7 @@ class VTKConan(ConanFile):
             # requirements, not from this package itself
             # https://docs.conan.io/en/latest/reference/build_helpers/run_environment.html#runenvironment
             lib_path = os.path.join(self.build_folder, 'lib')
-            self.run('DYLD_LIBRARY_PATH={0} cmake --build . {1}'.format(lib_path, cmake.build_config))
+            self.run('DYLD_LIBRARY_PATH={0} cmake --build . {1} -j'.format(lib_path, cmake.build_config))
         else:
             cmake.build()
         cmake.install()
