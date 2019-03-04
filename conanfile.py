@@ -39,7 +39,7 @@ class VTKConan(ConanFile):
             if tools.os_info.is_linux:
                 self.options["Qt"].qtx11extras = True
 
-    def system_package_architecture(self):
+    def _system_package_architecture(self):
         if tools.os_info.with_apt:
             if self.settings.arch == "x86":
                 return ':i386'
@@ -71,7 +71,8 @@ class VTKConan(ConanFile):
 
         if pack_names:
             installer = tools.SystemPackageTool()
-            installer.install(" ".join([item + self.system_package_architecture() for item in pack_names]))
+            for item in pack_names:
+                installer.install(item + self._system_package_architecture())
 
     def config_options(self):
         if self.settings.compiler == "Visual Studio":
