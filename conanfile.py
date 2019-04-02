@@ -2,7 +2,7 @@ import os
 from conans import ConanFile, CMake, tools
 
 class VTKConan(ConanFile):
-    name = "VTK"
+    name = "vtk"
     version = "8.2.0"
     description = "Visualization Toolkit by Kitware"
     url = "http://github.com/bilke/conan-vtk"
@@ -24,8 +24,8 @@ class VTKConan(ConanFile):
 
     def source(self):
         tools.get("https://ogsstorage.blob.core.windows.net/tmp/{0}-{1}.tar.gz"
-                  .format(self.name, self.version))
-        extracted_dir = self.name + "-" + self.version
+                  .format(self.name.upper(), self.version))
+        extracted_dir = self.name.upper() + "-" + self.version
         os.rename(extracted_dir, self.source_subfolder)
 
     def requirements(self):
@@ -105,13 +105,13 @@ class VTKConan(ConanFile):
             #os.environ['DYLD_LIBRARY_PATH'] = os.path.join(self.build_folder, 'lib') # + os.pathsep + os.environ['DYLD_LIBRARY_PATH']
             #self.output.info("DYLD_LIBRARY_PATH=%s" % (os.environ['DYLD_LIBRARY_PATH']))
 
-        cmake.configure()
+        cmake.configure(build_folder='build')
         if self.settings.os == 'Macos':
             # run_environment does not work here because it appends path just from
             # requirements, not from this package itself
             # https://docs.conan.io/en/latest/reference/build_helpers/run_environment.html#runenvironment
             lib_path = os.path.join(self.build_folder, 'lib')
-            self.run('DYLD_LIBRARY_PATH={0} cmake --build . {1} -j'.format(lib_path, cmake.build_config))
+            self.run('DYLD_LIBRARY_PATH={0} cmake --build build {1} -j'.format(lib_path, cmake.build_config))
         else:
             cmake.build()
         cmake.install()
