@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 2.8.11)
 project(cmake_wrapper)
 
-include(${CMAKE_BINARY_DIR}/../conanbuildinfo.cmake)
-conan_basic_setup()
-
 if(MSVC)
     # Remove pdb-related flags
     string(REGEX REPLACE "/Z[iI7]" ""
