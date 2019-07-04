@@ -13,9 +13,9 @@ class VTKConan(ConanFile):
     source_subfolder = "source_subfolder"
     options = {"shared": [True, False], "qt": [True, False], "mpi": [True, False],
                "fPIC": [True, False], "minimal": [True, False], "ioxml": [True, False],
-               "mpi_minimal": [True, False]}
+               "ioexport": [True, False], "mpi_minimal": [True, False]}
     default_options = ("shared=False", "qt=False", "mpi=False", "fPIC=False",
-        "minimal=False", "ioxml=False", "mpi_minimal=False")
+        "minimal=False", "ioxml=False", "ioexport=False", "mpi_minimal=False")
 
     short_paths = True
 
@@ -84,6 +84,8 @@ class VTKConan(ConanFile):
             cmake.definitions["VTK_Group_Rendering"] = "OFF"
         if self.options.ioxml:
             cmake.definitions["Module_vtkIOXML"] = "ON"
+        if self.options.ioexport:
+            cmake.definitions["Module_vtkIOExport"] = "ON"
         if self.options.qt:
             cmake.definitions["VTK_Group_Qt"] = "ON"
             cmake.definitions["VTK_QT_VERSION"] = "5"
