@@ -14,10 +14,12 @@ class VTKConan(ConanFile):
     options = {"shared": [True, False], "qt": [True, False], "mpi": [True, False],
                "fPIC": [True, False], "minimal": [True, False], "ioxml": [True, False],
                "ioexport": [True, False], "mpi_minimal": [True, False],
-               "external_tiff": [True, False]}
+               "external_tiff": [True, False], "external_zlib": [True, False]}
     default_options = ("shared=False", "qt=False", "mpi=False", "fPIC=False",
         "minimal=False", "ioxml=False", "ioexport=False", "mpi_minimal=False",
-        "external_tiff=True")
+        "external_tiff=True", "external_zlib=False")
+    # TODO: - VTK_USE_SYSTEM_NETCDF
+    #       - VTK_USE_SYSTEM_LIBPROJ4 does not exist?
 
     short_paths = True
 
@@ -38,6 +40,8 @@ class VTKConan(ConanFile):
                 self.options["qt"].qtx11extras = True
         if self.options.external_tiff:
             self.requires("libtiff/4.0.8@bincrafters/stable")
+        if self.options.external_zlib:
+            self.requires("zlib/1.2.11@conan/stable")
 
     def _system_package_architecture(self):
         if tools.os_info.with_apt:
@@ -103,6 +107,8 @@ class VTKConan(ConanFile):
 
         if self.options.external_tiff:
             cmake.definitions['VTK_USE_SYSTEM_TIFF'] = "ON"
+        if self.options.external_zlib:
+            cmake.definitions['VTK_USE_SYSTEM_ZLIB'] = "ON"
 
         if self.settings.build_type == "Debug" and self.settings.compiler == "Visual Studio":
             cmake.definitions["CMAKE_DEBUG_POSTFIX"] = "_d"
