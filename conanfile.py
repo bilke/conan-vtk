@@ -13,9 +13,11 @@ class VTKConan(ConanFile):
     source_subfolder = "source_subfolder"
     options = {"shared": [True, False], "qt": [True, False], "mpi": [True, False],
                "fPIC": [True, False], "minimal": [True, False], "ioxml": [True, False],
-               "ioexport": [True, False], "mpi_minimal": [True, False]}
+               "ioexport": [True, False], "mpi_minimal": [True, False],
+               "external_tiff": [True, False]}
     default_options = ("shared=False", "qt=False", "mpi=False", "fPIC=False",
-        "minimal=False", "ioxml=False", "ioexport=False", "mpi_minimal=False")
+        "minimal=False", "ioxml=False", "ioexport=False", "mpi_minimal=False",
+        "external_tiff=True")
 
     short_paths = True
 
@@ -34,6 +36,8 @@ class VTKConan(ConanFile):
             self.options["qt"].shared = True
             if tools.os_info.is_linux:
                 self.options["qt"].qtx11extras = True
+        if self.options.external_tiff:
+            self.requires("libtiff/4.0.8@bincrafters/stable")
 
     def _system_package_architecture(self):
         if tools.os_info.with_apt:
@@ -96,6 +100,9 @@ class VTKConan(ConanFile):
         if self.options.mpi_minimal:
             cmake.definitions["Module_vtkIOParallelXML"] = "ON"
             cmake.definitions["Module_vtkParallelMPI"] = "ON"
+
+        if self.options.external_tiff:
+            cmake.definitions['VTK_USE_SYSTEM_TIFF'] = "ON"
 
         if self.settings.build_type == "Debug" and self.settings.compiler == "Visual Studio":
             cmake.definitions["CMAKE_DEBUG_POSTFIX"] = "_d"
