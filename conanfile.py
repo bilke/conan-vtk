@@ -34,7 +34,7 @@ class VTKConan(ConanFile):
 
     def requirements(self):
         if self.options.qt:
-            self.requires("qt/5.12.2@bincrafters/stable")
+            self.requires("qt/5.11.3@bincrafters/stable")
             self.options["qt"].shared = True
             if tools.os_info.is_linux:
                 self.options["qt"].qtx11extras = True
