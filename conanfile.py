@@ -3,7 +3,7 @@ from conans import ConanFile, CMake, tools
 
 class VTKConan(ConanFile):
     name = "vtk"
-    version = "8.2.0"
+    version = "8.90.0"
     description = "Visualization Toolkit by Kitware"
     url = "http://github.com/bilke/conan-vtk"
     license = "MIT"
@@ -19,14 +19,21 @@ class VTKConan(ConanFile):
 
     short_paths = True
 
+    scm = {
+        "type": "git",
+        "subfolder": source_subfolder,
+        "url": "https://gitlab.kitware.com/vtk/vtk.git",
+        "revision": "master"
+    }
+
     version_split = version.split('.')
     short_version = "%s.%s" % (version_split[0], version_split[1])
 
-    def source(self):
-        tools.get("https://ogsstorage.blob.core.windows.net/tmp/{0}-{1}.tar.gz"
-                  .format(self.name.upper(), self.version))
-        extracted_dir = self.name.upper() + "-" + self.version
-        os.rename(extracted_dir, self.source_subfolder)
+    # def source(self):
+        # tools.get("https://ogsstorage.blob.core.windows.net/tmp/{0}-{1}.tar.gz"
+                #   .format(self.name.upper(), self.version))
+        # extracted_dir = self.name.upper() + "-" + self.version
+        # os.rename(extracted_dir, self.source_subfolder)
 
     def requirements(self):
         if self.options.qt:
@@ -76,26 +83,26 @@ class VTKConan(ConanFile):
 
     def build(self):
         cmake = CMake(self)
-        cmake.definitions["BUILD_TESTING"] = "OFF"
-        cmake.definitions["BUILD_EXAMPLES"] = "OFF"
+        cmake.definitions["VTK_BUILD_TESTING"] = "DONT_WANT"
+        cmake.definitions["VTK_BUILD_EXAMPLES"] = "DONT_WANT"
         cmake.definitions["BUILD_SHARED_LIBS"] = self.options.shared
         if self.options.minimal:
-            cmake.definitions["VTK_Group_StandAlone"] = "OFF"
-            cmake.definitions["VTK_Group_Rendering"] = "OFF"
+            cmake.definitions["VTK_GROUP_ENABLE_StandAlone"] = "NO"
+            cmake.definitions["VTK_GROUP_ENABLE_Rendering"] = "NO"
         if self.options.ioxml:
-            cmake.definitions["Module_vtkIOXML"] = "ON"
+            cmake.definitions["VTK_MODULE_ENABLE_VTK_IOXML"] = "YES"
         if self.options.ioexport:
-            cmake.definitions["Module_vtkIOExport"] = "ON"
+            cmake.definitions["VTK_MODULE_ENABLE_VTK_IOExport"] = "YES"
         if self.options.qt:
-            cmake.definitions["VTK_Group_Qt"] = "ON"
+            cmake.definitions["VTK_GROUP_ENABLE_Qt"] = "YES"
             cmake.definitions["VTK_QT_VERSION"] = "5"
             cmake.definitions["VTK_BUILD_QT_DESIGNER_PLUGIN"] = "OFF"
         if self.options.mpi:
-            cmake.definitions["VTK_Group_MPI"] = "ON"
-            cmake.definitions["Module_vtkIOParallelXML"] = "ON"
+            cmake.definitions["VTK_GROUP_ENABLE_MPI"] = "YES"
+            cmake.definitions["VTK_MODULE_ENABLE_VTK_IOParallelXML"] = "YES"
         if self.options.mpi_minimal:
-            cmake.definitions["Module_vtkIOParallelXML"] = "ON"
-            cmake.definitions["Module_vtkParallelMPI"] = "ON"
+            cmake.definitions["VTK_MODULE_ENABLE_VTK_IOParallelXML"] = "YES"
+            cmake.definitions["VTK_MODULE_ENABLE_VTK_ParallelMPI"] = "YES"
 
         if self.settings.build_type == "Debug" and self.settings.compiler == "Visual Studio":
             cmake.definitions["CMAKE_DEBUG_POSTFIX"] = "_d"
