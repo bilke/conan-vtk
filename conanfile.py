@@ -9,7 +9,7 @@ class VTKConan(ConanFile):
     license = "MIT"
     generators = "cmake"
     settings = "os", "compiler", "build_type", "arch"
-    exports = ["LICENSE.md", "CMakeLists.txt", "FindVTK.cmake"]
+    exports = ["LICENSE.md", "CMakeLists.txt", "FindVTK.cmake", "*.diff"]
     source_subfolder = "source_subfolder"
     options = {"shared": [True, False], "qt": [True, False], "mpi": [True, False],
                "fPIC": [True, False], "minimal": [True, False], "ioxml": [True, False],
@@ -31,6 +31,7 @@ class VTKConan(ConanFile):
                   .format(self.name.upper(), self.version))
         extracted_dir = self.name.upper() + "-" + self.version
         os.rename(extracted_dir, self.source_subfolder)
+        tools.patch(base_path=self.source_subfolder, patch_file="c1f5ea852207bf3e377f5f13fef015312d51c6ce.diff")
 
     def requirements(self):
         if self.options.qt:
