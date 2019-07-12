@@ -1,4 +1,7 @@
 import os
+import re
+
+from fnmatch import fnmatch
 from conans import ConanFile, CMake, tools
 
 class VTKConan(ConanFile):
@@ -130,6 +133,52 @@ class VTKConan(ConanFile):
         else:
             cmake.build()
         cmake.install()
+
+    # From https://git.ircad.fr/conan/conan-vtk/blob/stable/8.2.0-r1/conanfile.py
+    def cmake_fix_path(self, file_path, package_name):
+        try:
+            tools.replace_in_file(
+                file_path,
+                self.deps_cpp_info[package_name].rootpath.replace('\\', '/'),
+                "${CONAN_" + package_name.upper() + "_ROOT}",
+                strict=False
+            )
+        except:
+            self.output.info("Ignoring {0}...".format(package_name))
+
+    def cmake_fix_macos_sdk_path(self, file_path):
+        # Read in the file
+        with open(file_path, 'r') as file:
+            file_data = file.read()
+
+        if file_data:
+            # Replace the target string
+            file_data = re.sub(
+                # Match sdk path
+                r';/Applications/Xcode\.app/Contents/Developer/Platforms/MacOSX\.platform/Developer/SDKs/MacOSX\d\d\.\d\d\.sdk/usr/include',
+                '',
+                file_data,
+                re.M
+            )
+
+            # Write the file out again
+            with open(file_path, 'w') as file:
+                file.write(file_data)
+
+    def package(self):
+        for path, subdirs, names in os.walk(os.path.join(self.package_folder, 'lib', 'cmake')):
+            for name in names:
+                if fnmatch(name, '*.cmake'):
+                    cmake_file = os.path.join(path, name)
+
+                    if self.options.external_tiff:
+                        self.cmake_fix_path(cmake_file, "libtiff")
+                    if self.options.external_zlib:
+                        self.cmake_fix_path(cmake_file, "zlib")
+
+                    if tools.os_info.is_macos:
+                        self.cmake_fix_macos_sdk_path(cmake_file)
+
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
