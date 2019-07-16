@@ -17,6 +17,7 @@ if __name__ == "__main__":
 
         new_options = copy.copy(item.options)
         new_options["vtk:qt"] = True
+        new_options["vtk:ioxml"] = True
         items.append([item.settings, new_options, item.env_vars, item.build_requires])
 
         new_options = copy.copy(item.options)

@@ -12,7 +12,8 @@ class VTKConan(ConanFile):
     license = "MIT"
     generators = "cmake"
     settings = "os", "compiler", "build_type", "arch"
-    exports = ["LICENSE.md", "CMakeLists.txt", "FindVTK.cmake", "*.diff"]
+    exports = ["LICENSE.md", "CMakeLists.txt", "FindVTK.cmake",
+        "c1f5ea852207bf3e377f5f13fef015312d51c6ce.diff"]
     source_subfolder = "source_subfolder"
     options = {"shared": [True, False], "qt": [True, False], "mpi": [True, False],
                "fPIC": [True, False], "minimal": [True, False], "ioxml": [True, False],
