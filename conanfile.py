@@ -12,6 +12,7 @@ class VTKConan(ConanFile):
     license = "MIT"
     generators = "cmake"
     settings = "os", "compiler", "build_type", "arch"
+    revision_mode = "scm"
     exports = ["LICENSE.md", "CMakeLists.txt", "FindVTK.cmake",
         "vtknetcdf_snprintf.diff", "vtktiff_mangle.diff"]
     source_subfolder = "source_subfolder"
@@ -32,7 +33,7 @@ class VTKConan(ConanFile):
         extracted_dir = self.name.upper() + "-" + self.version
         os.rename(extracted_dir, self.source_subfolder)
         tools.patch(base_path=self.source_subfolder, patch_file="vtknetcdf_snprintf.diff")
-        tools.patch(base_path=self.source_subfolder, patch_file="vtktiff_mangle.diff") # Bump 1
+        tools.patch(base_path=self.source_subfolder, patch_file="vtktiff_mangle.diff")
 
     def requirements(self):
         if self.options.qt:
