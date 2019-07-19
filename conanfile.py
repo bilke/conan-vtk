@@ -13,17 +13,13 @@ class VTKConan(ConanFile):
     generators = "cmake"
     settings = "os", "compiler", "build_type", "arch"
     exports = ["LICENSE.md", "CMakeLists.txt", "FindVTK.cmake",
-        "c1f5ea852207bf3e377f5f13fef015312d51c6ce.diff"]
+        "vtknetcdf_snprintf.diff", "vtktiff_mangle.diff"]
     source_subfolder = "source_subfolder"
     options = {"shared": [True, False], "qt": [True, False], "mpi": [True, False],
                "fPIC": [True, False], "minimal": [True, False], "ioxml": [True, False],
-               "ioexport": [True, False], "mpi_minimal": [True, False],
-               "external_tiff": [True, False], "external_zlib": [True, False]}
+               "ioexport": [True, False], "mpi_minimal": [True, False]}
     default_options = ("shared=False", "qt=False", "mpi=False", "fPIC=False",
-        "minimal=False", "ioxml=False", "ioexport=False", "mpi_minimal=False",
-        "external_tiff=True", "external_zlib=False")
-    # TODO: - VTK_USE_SYSTEM_NETCDF
-    #       - VTK_USE_SYSTEM_LIBPROJ4 does not exist?
+        "minimal=False", "ioxml=False", "ioexport=False", "mpi_minimal=False")
 
     short_paths = True
 
@@ -35,18 +31,15 @@ class VTKConan(ConanFile):
                   .format(self.name.upper(), self.version))
         extracted_dir = self.name.upper() + "-" + self.version
         os.rename(extracted_dir, self.source_subfolder)
-        tools.patch(base_path=self.source_subfolder, patch_file="c1f5ea852207bf3e377f5f13fef015312d51c6ce.diff")
+        tools.patch(base_path=self.source_subfolder, patch_file="vtknetcdf_snprintf.diff")
+        tools.patch(base_path=self.source_subfolder, patch_file="vtktiff_mangle.diff") # Bump 1
 
     def requirements(self):
         if self.options.qt:
-            self.requires("qt/5.11.3@bincrafters/stable")
+            self.requires("qt/5.12.4@bincrafters/stable")
             self.options["qt"].shared = True
             if tools.os_info.is_linux:
                 self.options["qt"].qtx11extras = True
-        if self.options.external_tiff:
-            self.requires("libtiff/4.0.8@bincrafters/stable")
-        if self.options.external_zlib:
-            self.requires("zlib/1.2.11@conan/stable")
 
     def _system_package_architecture(self):
         if tools.os_info.with_apt:
@@ -92,6 +85,7 @@ class VTKConan(ConanFile):
         cmake.definitions["BUILD_TESTING"] = "OFF"
         cmake.definitions["BUILD_EXAMPLES"] = "OFF"
         cmake.definitions["BUILD_SHARED_LIBS"] = self.options.shared
+
         if self.options.minimal:
             cmake.definitions["VTK_Group_StandAlone"] = "OFF"
             cmake.definitions["VTK_Group_Rendering"] = "OFF"
@@ -109,11 +103,6 @@ class VTKConan(ConanFile):
         if self.options.mpi_minimal:
             cmake.definitions["Module_vtkIOParallelXML"] = "ON"
             cmake.definitions["Module_vtkParallelMPI"] = "ON"
-
-        if self.options.external_tiff:
-            cmake.definitions['VTK_USE_SYSTEM_TIFF'] = "ON"
-        if self.options.external_zlib:
-            cmake.definitions['VTK_USE_SYSTEM_ZLIB'] = "ON"
 
         if self.settings.build_type == "Debug" and self.settings.compiler == "Visual Studio":
             cmake.definitions["CMAKE_DEBUG_POSTFIX"] = "_d"
@@ -172,10 +161,10 @@ class VTKConan(ConanFile):
                 if fnmatch(name, '*.cmake'):
                     cmake_file = os.path.join(path, name)
 
-                    if self.options.external_tiff:
-                        self.cmake_fix_path(cmake_file, "libtiff")
-                    if self.options.external_zlib:
-                        self.cmake_fix_path(cmake_file, "zlib")
+                    # if self.options.external_tiff:
+                        # self.cmake_fix_path(cmake_file, "libtiff")
+                    # if self.options.external_zlib:
+                        # self.cmake_fix_path(cmake_file, "zlib")
 
                     if tools.os_info.is_macos:
                         self.cmake_fix_macos_sdk_path(cmake_file)
