@@ -110,8 +110,6 @@ class VTKConan(ConanFile):
         if self.settings.os == 'Macos':
             self.env['DYLD_LIBRARY_PATH'] = os.path.join(self.build_folder, 'lib')
             self.output.info("cmake build: %s" % self.build_folder)
-            #os.environ['DYLD_LIBRARY_PATH'] = os.path.join(self.build_folder, 'lib') # + os.pathsep + os.environ['DYLD_LIBRARY_PATH']
-            #self.output.info("DYLD_LIBRARY_PATH=%s" % (os.environ['DYLD_LIBRARY_PATH']))
 
         cmake.configure(build_folder='build')
         if self.settings.os == 'Macos':
