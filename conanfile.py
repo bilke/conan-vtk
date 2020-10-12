@@ -168,15 +168,38 @@ class VTKConan(ConanFile):
                     if tools.os_info.is_macos:
                         self.cmake_fix_macos_sdk_path(cmake_file)
 
-
     def package_info(self):
-        self.cpp_info.libs = tools.collect_libs(self)
+        # For static linking in GCC libraries must be provided in appropriate order.
+        # I couldn't find what is correct order of VTK libraries.
+        # ${CONAN_LIBS} in VTK 7.1 has following order, which not necessary is correct, but it was used as starting point
+        # ${CONAN_LIBS} = ['vtkCommonColor', 'vtkCommonCore', 'vtksys', 'vtkCommonDataModel', 'vtkCommonMath', 'vtkCommonMisc', 'vtkCommonSystem', 'vtkCommonTransforms', 'vtkCommonComputationalGeometry', 'vtkCommonExecutionModel', 'vtkDICOMParser', 'vtkFiltersCore', 'vtkFiltersExtraction', 'vtkFiltersGeneral', 'vtkFiltersStatistics', 'vtkImagingFourier', 'vtkImagingCore', 'vtkalglib', 'vtkFiltersGeometry', 'vtkFiltersHybrid', 'vtkImagingSources', 'vtkRenderingCore', 'vtkFiltersSources', 'vtkFiltersModeling', 'vtkIOCore', 'vtkzlib', 'vtkIOExport', 'vtkIOImage', 'vtkmetaio', 'vtkjpeg', 'vtkpng', 'vtktiff', 'vtkRenderingGL2PSOpenGL2', 'vtkRenderingOpenGL2', 'vtkglew', 'vtkgl2ps', 'vtkIOGeometry', 'vtkIOLegacy', 'vtkIOXML', 'vtkIOXMLParser', 'vtkexpat', 'vtkImagingColor', 'vtkImagingGeneral', 'vtkImagingHybrid', 'vtkImagingMath', 'vtkInteractionStyle', 'vtkInteractionWidgets', 'vtkRenderingAnnotation', 'vtkRenderingFreeType', 'vtkfreetype', 'vtkRenderingVolume', 'vtkRenderingContext2D', 'vtkRenderingContextOpenGL2', 'vtkRenderingVolumeOpenGL2', 'vtkViewsContext2D', 'vtkViewsCore']
+        libs = tools.collect_libs(self)
+        libs_ordered = []
+        print('VTK libs before sort: ' + (';'.join(libs)))
+        order = ['vtkViewsCore', 'vtkViewsContext2D', 'vtkRenderingVolumeOpenGL2', 'vtkRenderingContextOpenGL2', 'vtkRenderingContext2D', 'vtkRenderingVolume', 'vtkfreetype', 'vtkRenderingFreeType', 'vtkRenderingAnnotation', 'vtkInteractionWidgets', 'vtkInteractionStyle', 'vtkImagingMath', 'vtkImagingHybrid', 'vtkImagingGeneral', 'vtkImagingColor', 'vtkexpat', 'vtkIOXMLParser', 'vtkIOXML', 'vtkIOLegacy', 'vtkIOGeometry', 'vtkgl2ps', 'vtkglew', 'vtkRenderingOpenGL2', 'vtkRenderingGL2PSOpenGL2', 'vtktiff', 'vtkpng', 'vtkjpeg', 'vtkmetaio', 'vtkIOImage', 'vtkIOExport', 'vtkzlib', 'vtkIOCore', 'vtkFiltersModeling', 'vtkFiltersSources', 'vtkRenderingCore', 'vtkImagingSources', 'vtkFiltersHybrid', 'vtkFiltersGeometry', 'vtkalglib', 'vtkImagingCore', 'vtkImagingFourier', 'vtkFiltersStatistics', 'vtkFiltersGeneral', 'vtkFiltersExtraction', 'vtkFiltersCore', 'vtkDICOMParser', 'vtkCommonExecutionModel', 'vtkCommonComputationalGeometry', 'vtkCommonDataModel', 'vtkCommonSystem', 'vtkCommonTransforms', 'vtkCommonMath', 'vtkCommonMisc', 'vtkCommonCore', 'vtkCommonColor', 'vtksys']
+        for item in order:
+            for idx in range(len(libs)): 
+                if item.lower() in libs[idx].lower():
+                    value = libs.pop(idx)
+                    libs_ordered.append(value)
+                    break
+        libs_ordered = libs + libs_ordered # add unordered elements, if any
+        print('VTK libs ordered: ' + (';'.join(libs_ordered)))
+        self.cpp_info.libs = libs_ordered
+
+        if not self.options.shared:
+            # Adding system libs without 'lib' prefix and '.so' or '.so.X' suffix.
+            if self.settings.os == 'Linux':
+                self.cpp_info.system_libs.append('pthread')
+                self.cpp_info.system_libs.append('dl')            # 'libvtksys-7.1.a' require 'dlclose', 'dlopen', 'dlsym' and 'dlerror' which on CentOS are in 'dl' library
+
+            if self.settings.os == 'Windows':
+                self.cpp_info.system_libs.append('Ws2_32.lib')    # 'vtksys-9.0d.lib' require 'gethostbyname', 'gethostname', 'WSAStartup' and 'WSACleanup' which are in 'Ws2_32.lib' library
+                self.cpp_info.system_libs.append('Psapi.lib')     # 'vtksys-9.0d.lib' require 'GetProcessMemoryInfo' which is in 'Psapi.lib' library
+                self.cpp_info.system_libs.append('dbghelp.lib')   # 'vtksys-9.0d.lib' require '__imp_SymGetLineFromAddr64', '__imp_SymInitialize' and '__imp_SymFromAddr' which are in 'dbghelp.lib' library
 
         self.cpp_info.includedirs = [
             "include/vtk-%s" % self.short_version,
             "include/vtk-%s/vtknetcdf/include" % self.short_version,
             "include/vtk-%s/vtknetcdfcpp" % self.short_version
         ]
-
-        if self.settings.os == 'Linux':
-            self.cpp_info.libs.append('pthread')
