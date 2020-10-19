@@ -16,11 +16,20 @@ class VTKConan(ConanFile):
     exports = ["LICENSE.md", "CMakeLists.txt", "FindVTK.cmake",
         "vtknetcdf_snprintf.diff", "vtktiff_mangle.diff"]
     source_subfolder = "source_subfolder"
-    options = {"shared": [True, False], "qt": [True, False], "mpi": [True, False],
-               "fPIC": [True, False], "minimal": [True, False], "ioxml": [True, False],
-               "ioexport": [True, False], "mpi_minimal": [True, False]}
-    default_options = ("shared=False", "qt=False", "mpi=False", "fPIC=False",
-        "minimal=False", "ioxml=False", "ioexport=False", "mpi_minimal=False")
+
+    groups = ["StandAlone", "Rendering", "MPI", "Qt"]
+    modules = ["IOXML", "IOExport", "IOXdmf3", "IOParallelXML", "ParallelMPI"]
+
+    options = dict({"shared": [True, False], "fPIC": [True, False],
+    }, **{"group_{}".format(group.lower()): [True, False] for group in groups},
+    **{"module_{}".format(module.lower()): [True, False] for module in modules}
+    )
+    default_options = dict({
+        "shared": False,
+        "fPIC": False,
+        }, **{"group_{}".format(group.lower()): True for group in groups if (group in ["StandAlone", "Rendering"])},
+        **{"group_{}".format(group.lower()): False for group in groups if (group not in ["StandAlone", "Rendering"])},
+        **{"module_{}".format(module.lower()): False for module in modules})
 
     short_paths = True
 
@@ -36,7 +45,9 @@ class VTKConan(ConanFile):
         tools.patch(base_path=self.source_subfolder, patch_file="vtktiff_mangle.diff")
 
     def requirements(self):
-        if self.options.qt:
+        if self.options.module_ioxdmf3:
+            self.requires("boost/1.66.0@conan/stable")
+        if self.options.group_qt:
             self.requires("qt/5.12.4@bincrafters/stable")
             self.options["qt"].shared = True
             if tools.os_info.is_linux:
@@ -58,7 +69,7 @@ class VTKConan(ConanFile):
 
     def build_requirements(self):
         pack_names = None
-        if not self.options.minimal and tools.os_info.is_linux:
+        if self.options.group_rendering and tools.os_info.is_linux:
             if tools.os_info.with_apt:
                 pack_names = [
                     "freeglut3-dev",
@@ -87,23 +98,14 @@ class VTKConan(ConanFile):
         cmake.definitions["BUILD_EXAMPLES"] = "OFF"
         cmake.definitions["BUILD_SHARED_LIBS"] = self.options.shared
 
-        if self.options.minimal:
-            cmake.definitions["VTK_Group_StandAlone"] = "OFF"
-            cmake.definitions["VTK_Group_Rendering"] = "OFF"
-        if self.options.ioxml:
-            cmake.definitions["Module_vtkIOXML"] = "ON"
-        if self.options.ioexport:
-            cmake.definitions["Module_vtkIOExport"] = "ON"
-        if self.options.qt:
-            cmake.definitions["VTK_Group_Qt"] = "ON"
+        for group in self.groups:
+            cmake.definitions["VTK_Group_{}".format(group)] = self.options.get_safe("group_{}".format(group.lower()))
+        for module in self.modules:
+            cmake.definitions["Module_vtk{}".format(module)] = self.options.get_safe("module_{}".format(module.lower()))
+
+        if self.options.group_qt:
             cmake.definitions["VTK_QT_VERSION"] = "5"
             cmake.definitions["VTK_BUILD_QT_DESIGNER_PLUGIN"] = "OFF"
-        if self.options.mpi:
-            cmake.definitions["VTK_Group_MPI"] = "ON"
-            cmake.definitions["Module_vtkIOParallelXML"] = "ON"
-        if self.options.mpi_minimal:
-            cmake.definitions["Module_vtkIOParallelXML"] = "ON"
-            cmake.definitions["Module_vtkParallelMPI"] = "ON"
 
         if self.settings.build_type == "Debug" and self.settings.compiler == "Visual Studio":
             cmake.definitions["CMAKE_DEBUG_POSTFIX"] = "_d"
