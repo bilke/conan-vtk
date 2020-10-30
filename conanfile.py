@@ -4,6 +4,7 @@ import re
 from fnmatch import fnmatch
 from conans import ConanFile, CMake, tools
 
+
 class VTKConan(ConanFile):
     name = "vtk"
     version = "8.2.0"
@@ -13,29 +14,58 @@ class VTKConan(ConanFile):
     generators = "cmake"
     settings = "os", "compiler", "build_type", "arch"
     revision_mode = "scm"
-    exports = ["LICENSE.md", "CMakeLists.txt", "FindVTK.cmake",
-        "vtknetcdf_snprintf.diff", "vtktiff_mangle.diff"]
+    exports = [
+        "LICENSE.md",
+        "CMakeLists.txt",
+        "FindVTK.cmake",
+        "vtknetcdf_snprintf.diff",
+        "vtktiff_mangle.diff",
+    ]
     source_subfolder = "source_subfolder"
-    options = {"shared": [True, False], "qt": [True, False], "mpi": [True, False],
-               "fPIC": [True, False], "minimal": [True, False], "ioxml": [True, False],
-               "ioexport": [True, False], "mpi_minimal": [True, False]}
-    default_options = ("shared=False", "qt=False", "mpi=False", "fPIC=False",
-        "minimal=False", "ioxml=False", "ioexport=False", "mpi_minimal=False")
+    options = {
+        "shared": [True, False],
+        "qt": [True, False],
+        "mpi": [True, False],
+        "fPIC": [True, False],
+        "minimal": [True, False],
+        "ioxml": [True, False],
+        "ioexport": [True, False],
+        "mpi_minimal": [True, False],
+        "ioxdmf3": [True, False],
+    }
+    default_options = (
+        "shared=False",
+        "qt=False",
+        "mpi=False",
+        "fPIC=False",
+        "minimal=False",
+        "ioxml=False",
+        "ioexport=False",
+        "mpi_minimal=False",
+        "ioxdmf3=False",
+    )
 
     short_paths = True
 
-    version_split = version.split('.')
+    version_split = version.split(".")
     short_version = "%s.%s" % (version_split[0], version_split[1])
 
     def source(self):
-        tools.get("https://github.com/Kitware/{0}/archive/v{1}.tar.gz"
-                  .format(self.name.upper(), self.version))
+        tools.get(
+            "https://github.com/Kitware/{0}/archive/v{1}.tar.gz".format(
+                self.name.upper(), self.version
+            )
+        )
         extracted_dir = self.name.upper() + "-" + self.version
         os.rename(extracted_dir, self.source_subfolder)
-        tools.patch(base_path=self.source_subfolder, patch_file="vtknetcdf_snprintf.diff")
+        tools.patch(
+            base_path=self.source_subfolder, patch_file="vtknetcdf_snprintf.diff"
+        )
         tools.patch(base_path=self.source_subfolder, patch_file="vtktiff_mangle.diff")
 
     def requirements(self):
+        if self.options.ioxdmf3:
+            self.requires("boost/1.66.0@conan/stable")
         if self.options.qt:
             self.requires("qt/5.12.4@bincrafters/stable")
             self.options["qt"].shared = True
@@ -45,15 +75,15 @@ class VTKConan(ConanFile):
     def _system_package_architecture(self):
         if tools.os_info.with_apt:
             if self.settings.arch == "x86":
-                return ':i386'
+                return ":i386"
             elif self.settings.arch == "x86_64":
-                return ':amd64'
+                return ":amd64"
 
         if tools.os_info.with_yum:
             if self.settings.arch == "x86":
-                return '.i686'
-            elif self.settings.arch == 'x86_64':
-                return '.x86_64'
+                return ".i686"
+            elif self.settings.arch == "x86_64":
+                return ".x86_64"
         return ""
 
     def build_requirements(self):
@@ -70,7 +100,8 @@ class VTKConan(ConanFile):
                     "libx11-dev",
                     "libxext-dev",
                     "libxt-dev",
-                    "libglu1-mesa-dev"]
+                    "libglu1-mesa-dev",
+                ]
 
         if pack_names:
             installer = tools.SystemPackageTool()
@@ -94,6 +125,10 @@ class VTKConan(ConanFile):
             cmake.definitions["Module_vtkIOXML"] = "ON"
         if self.options.ioexport:
             cmake.definitions["Module_vtkIOExport"] = "ON"
+        if self.options.ioxdmf3:
+            cmake.definitions["Module_vtkIOXdmf3"] = "ON"
+            # if tools.os_info.is_macos:
+            # cmake.definitions["VTK_USE_SYSTEM_LIBXML2"] = "ON"
         if self.options.qt:
             cmake.definitions["VTK_Group_Qt"] = "ON"
             cmake.definitions["VTK_QT_VERSION"] = "5"
@@ -105,20 +140,27 @@ class VTKConan(ConanFile):
             cmake.definitions["Module_vtkIOParallelXML"] = "ON"
             cmake.definitions["Module_vtkParallelMPI"] = "ON"
 
-        if self.settings.build_type == "Debug" and self.settings.compiler == "Visual Studio":
+        if (
+            self.settings.build_type == "Debug"
+            and self.settings.compiler == "Visual Studio"
+        ):
             cmake.definitions["CMAKE_DEBUG_POSTFIX"] = "_d"
 
-        if self.settings.os == 'Macos':
-            self.env['DYLD_LIBRARY_PATH'] = os.path.join(self.build_folder, 'lib')
+        if self.settings.os == "Macos":
+            self.env["DYLD_LIBRARY_PATH"] = os.path.join(self.build_folder, "lib")
             self.output.info("cmake build: %s" % self.build_folder)
 
-        cmake.configure(build_folder='build')
-        if self.settings.os == 'Macos':
+        cmake.configure(build_folder="build")
+        if self.settings.os == "Macos":
             # run_environment does not work here because it appends path just from
             # requirements, not from this package itself
             # https://docs.conan.io/en/latest/reference/build_helpers/run_environment.html#runenvironment
-            lib_path = os.path.join(self.build_folder, 'lib')
-            self.run('DYLD_LIBRARY_PATH={0} cmake --build build {1} -j'.format(lib_path, cmake.build_config))
+            lib_path = os.path.join(self.build_folder, "lib")
+            self.run(
+                "DYLD_LIBRARY_PATH={0} cmake --build build {1} -j".format(
+                    lib_path, cmake.build_config
+                )
+            )
         else:
             cmake.build()
         cmake.install()
@@ -128,46 +170,47 @@ class VTKConan(ConanFile):
         try:
             tools.replace_in_file(
                 file_path,
-                self.deps_cpp_info[package_name].rootpath.replace('\\', '/'),
+                self.deps_cpp_info[package_name].rootpath.replace("\\", "/"),
                 "${CONAN_" + package_name.upper() + "_ROOT}",
-                strict=False
+                strict=False,
             )
         except:
             self.output.info("Ignoring {0}...".format(package_name))
 
     def cmake_fix_macos_sdk_path(self, file_path):
         # Read in the file
-        with open(file_path, 'r') as file:
+        with open(file_path, "r") as file:
             file_data = file.read()
 
         if file_data:
             # Replace the target string
             file_data = re.sub(
                 # Match sdk path
-                r';/Applications/Xcode\.app/Contents/Developer/Platforms/MacOSX\.platform/Developer/SDKs/MacOSX\d\d\.\d\d\.sdk/usr/include',
-                '',
+                r";/Applications/Xcode\.app/Contents/Developer/Platforms/MacOSX\.platform/Developer/SDKs/MacOSX\d\d\.\d\d\.sdk/usr/include",
+                "",
                 file_data,
-                re.M
+                re.M,
             )
 
             # Write the file out again
-            with open(file_path, 'w') as file:
+            with open(file_path, "w") as file:
                 file.write(file_data)
 
     def package(self):
-        for path, subdirs, names in os.walk(os.path.join(self.package_folder, 'lib', 'cmake')):
+        for path, subdirs, names in os.walk(
+            os.path.join(self.package_folder, "lib", "cmake")
+        ):
             for name in names:
-                if fnmatch(name, '*.cmake'):
+                if fnmatch(name, "*.cmake"):
                     cmake_file = os.path.join(path, name)
 
                     # if self.options.external_tiff:
-                        # self.cmake_fix_path(cmake_file, "libtiff")
+                    # self.cmake_fix_path(cmake_file, "libtiff")
                     # if self.options.external_zlib:
-                        # self.cmake_fix_path(cmake_file, "zlib")
+                    # self.cmake_fix_path(cmake_file, "zlib")
 
                     if tools.os_info.is_macos:
                         self.cmake_fix_macos_sdk_path(cmake_file)
-
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
@@ -175,8 +218,8 @@ class VTKConan(ConanFile):
         self.cpp_info.includedirs = [
             "include/vtk-%s" % self.short_version,
             "include/vtk-%s/vtknetcdf/include" % self.short_version,
-            "include/vtk-%s/vtknetcdfcpp" % self.short_version
+            "include/vtk-%s/vtknetcdfcpp" % self.short_version,
         ]
 
-        if self.settings.os == 'Linux':
-            self.cpp_info.libs.append('pthread')
+        if self.settings.os == "Linux":
+            self.cpp_info.libs.append("pthread")
