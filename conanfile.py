@@ -32,6 +32,7 @@ class VTKConan(ConanFile):
         "ioexport": [True, False],
         "mpi_minimal": [True, False],
         "ioxdmf3": [True, False],
+        "iolegacy": [True, False],
     }
     default_options = (
         "shared=False",
@@ -43,6 +44,7 @@ class VTKConan(ConanFile):
         "ioexport=False",
         "mpi_minimal=False",
         "ioxdmf3=False",
+        "iolegacy=False",
     )
 
     short_paths = True
@@ -127,6 +129,8 @@ class VTKConan(ConanFile):
             cmake.definitions["Module_vtkIOExport"] = "ON"
         if self.options.ioxdmf3:
             cmake.definitions["Module_vtkIOXdmf3"] = "ON"
+        if self.options.iolegacy:
+            cmake.definitions["Module_vtkIOLegacy"] = "ON"
             # if tools.os_info.is_macos:
             # cmake.definitions["VTK_USE_SYSTEM_LIBXML2"] = "ON"
         if self.options.qt:
